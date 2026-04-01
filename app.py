@@ -33,7 +33,7 @@ st.markdown("""
     .btn-teklif:hover { background-color: #b3151b; transform: scale(1.05); }
 
     /* Hero Section (Açılış Ekranı) */
-    .hero { padding: 40px 0 100px 0; }
+    .hero { padding: 40px 0 100px 0; position: relative; }
     .hero h1 { font-size: 70px !important; font-weight: 900 !important; line-height: 1.1 !important; margin-bottom: 25px !important; letter-spacing: -2px; }
     .hero p { font-size: 20px; color: #aaa; max-width: 650px; line-height: 1.6; margin-bottom: 40px; }
     
@@ -63,37 +63,11 @@ st.markdown("""
     .testimonial-author { font-weight: 800; color: #fff; font-style: normal; font-size: 16px; font-family: 'Montserrat', sans-serif;}
     .testimonial-company { color: #E31B23; font-size: 14px; font-style: normal; font-weight: 600; font-family: 'Montserrat', sans-serif;}
 
-    /* =======================================================
-       YENİ PORTFÖY / MEDYA GALERİSİ TASARIMI (PINTEREST STYLE)
-       ======================================================= */
-    .media-container { 
-        background: linear-gradient(145deg, #0d0d0d, #111);
-        padding: 12px; 
-        border-radius: 20px; 
-        border: 1px solid #1a1a1a; 
-        margin-bottom: 25px; 
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-        box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-    }
-    .media-container:hover { 
-        border-color: #E31B23; 
-        transform: translateY(-10px) scale(1.02); 
-        box-shadow: 0 20px 40px rgba(227, 27, 35, 0.2); 
-    }
-    .media-container img, .media-container video { 
-        border-radius: 12px !important; 
-    }
-
-    /* Kapsül Filtre Çubuğu (StRadio) */
-    div[role="radiogroup"] {
-        background: #0a0a0a;
-        padding: 10px 25px;
-        border-radius: 50px;
-        border: 1px solid #1a1a1a;
-        justify-content: center;
-        gap: 20px;
-        margin: 0 auto;
-    }
+    /* Medya Galerisi (Pinterest Style) */
+    .media-container { background: linear-gradient(145deg, #0d0d0d, #111); padding: 12px; border-radius: 20px; border: 1px solid #1a1a1a; margin-bottom: 25px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 20px rgba(0,0,0,0.5);}
+    .media-container:hover { border-color: #E31B23; transform: translateY(-10px) scale(1.02); box-shadow: 0 20px 40px rgba(227, 27, 35, 0.2); }
+    .media-container img, .media-container video { border-radius: 12px !important; }
+    div[role="radiogroup"] { background: #0a0a0a; padding: 10px 25px; border-radius: 50px; border: 1px solid #1a1a1a; justify-content: center; gap: 20px; margin: 0 auto; }
 
     /* Form Input */
     .stTextInput input, .stTextArea textarea { background-color: #0f0f0f !important; color: #fff !important; border: 1px solid #222 !important; border-radius: 10px !important; padding: 18px !important; font-size: 16px !important; font-family: 'Century Gothic', sans-serif;}
@@ -111,7 +85,6 @@ st.markdown("""
     .social-icons a { color: #fff; font-size: 20px; margin-right: 15px; background: #1a1a1a; width: 40px; height: 40px; display: inline-flex; justify-content: center; align-items: center; border-radius: 50%; transition: 0.3s; }
     .social-icons a:hover { background: #E31B23; transform: translateY(-3px); }
     .footer-bottom { text-align: center; border-top: 1px solid #1a1a1a; margin-top: 60px; padding-top: 25px; color: #555; font-size: 14px; font-family: 'Century Gothic', sans-serif;}
-    
     .footer-flex-container { display: flex; flex-wrap: wrap; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
     /* =====================================================================
@@ -141,6 +114,9 @@ st.markdown("""
         .footer-flex-container { flex-direction: column; align-items: center; }
         .footer-col { margin-bottom: 40px !important; min-width: 100% !important; }
         .social-icons { justify-content: center; }
+        
+        /* Mobilde Oyun Butonu Boyutu */
+        .btn-play-dino { width: 35px !important; height: 35px !important; font-size: 16px !important; margin-left: 10px !important; }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -185,7 +161,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ----------------------------------------------------
-# 2. HERO SECTION
+# 2. HERO SECTION (OYUNLAŞTIRILMIŞ EASTER EGG EKLENDİ)
 # ----------------------------------------------------
 col_logo, col_text = st.columns([1, 4])
 with col_logo:
@@ -196,9 +172,104 @@ with col_logo:
 
 with col_text:
     st.markdown("""
+    <style>
+        #dino-toggle { display: none; }
+        
+        /* Yazı ve Buton Animasyonu */
+        .hero-content-wrapper { transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        
+        /* Oyun Penceresi Tasarımı */
+        .dino-game-wrapper {
+            display: block;
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            height: 300px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border-radius: 15px;
+            overflow: hidden;
+            background: #f7f7f7; /* Oyunun beyaz arka planı için */
+            border: 2px solid #E31B23;
+            box-shadow: 0 15px 35px rgba(227, 27, 35, 0.2);
+            z-index: 50;
+        }
+
+        /* Checkbox Hack (Butona Basınca Ne Olacak) */
+        #dino-toggle:checked ~ .hero-content-wrapper { 
+            opacity: 0; 
+            visibility: hidden; 
+            transform: translateY(-30px); 
+        }
+        #dino-toggle:checked ~ .dino-game-wrapper { 
+            opacity: 1; 
+            visibility: visible; 
+            transform: translateY(0); 
+        }
+
+        /* Play Butonu Tasarımı */
+        .btn-play-dino {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #E31B23;
+            color: #fff;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-left: 15px;
+            font-size: 20px;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            vertical-align: middle;
+            box-shadow: 0 0 15px rgba(227,27,35,0.4);
+            margin-bottom: 10px;
+        }
+        .btn-play-dino:hover { 
+            background: #b3151b; 
+            transform: scale(1.15) rotate(10deg); 
+            box-shadow: 0 0 25px rgba(227,27,35,0.7); 
+        }
+
+        /* Kapatma Butonu Tasarımı */
+        .btn-close-dino {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #E31B23;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 800;
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: 0.3s;
+        }
+        .btn-close-dino:hover { background: #000; }
+    </style>
+
     <div class="hero">
-    <h1>Markanızın Dijital<br><span style="color:#E31B23;">Sesini Yükseltin.</span></h1>
-    <p>Hedef kitlenizde yankı uyandıracak, etkileyici ve sonuç odaklı pazarlama çözümlerimizle markanızı zirveye taşıyoruz. Vizyonunuzu gerçeğe dönüştürmek için doğru yerdesiniz.</p>
+        <input type="checkbox" id="dino-toggle">
+        
+        <div class="hero-content-wrapper">
+            <h1>Markanızın Dijital<br><span style="color:#E31B23;">Sesini Yükseltin.</span>
+                <label for="dino-toggle" class="btn-play-dino" title="Sürpriz Oyun İçin Tıkla!">
+                    <i class="fa-solid fa-gamepad"></i>
+                </label>
+            </h1>
+            <p>Hedef kitlenizde yankı uyandıracak, etkileyici ve sonuç odaklı pazarlama çözümlerimizle markanızı zirveye taşıyoruz. Vizyonunuzu gerçeğe dönüştürmek için doğru yerdesiniz.</p>
+        </div>
+
+        <div class="dino-game-wrapper">
+            <label for="dino-toggle" class="btn-close-dino"><i class="fa-solid fa-xmark"></i> GERİ DÖN</label>
+            <iframe src="https://wayou.github.io/t-rex-runner/" width="100%" height="100%" style="border:none;"></iframe>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -361,7 +432,7 @@ with ig_col_main:
 st.write("<br><br><br>", unsafe_allow_html=True)
 
 # ----------------------------------------------------
-# 7. MEDYA PORTFÖYÜ (YENİ - PINTEREST TARZI GALERİ)
+# 7. MEDYA PORTFÖYÜ (PINTEREST TARZI GALERİ)
 # ----------------------------------------------------
 st.markdown("<span class='sec-tag'>#PORTFÖY</span><h2 class='sec-title'>Medya Portföyü</h2>", unsafe_allow_html=True)
 st.markdown("<p style='font-size:15px; color:#888; font-family: Century Gothic, sans-serif; margin-bottom: 30px;'>Dijital sanat eserlerimizi detaylı incelemek için görsellerin üzerine tıklayabilirsiniz.</p>", unsafe_allow_html=True)
@@ -377,7 +448,6 @@ else:
     if not tum_dosyalar:
         st.warning("'medya' klasörünüz şu an boş. Post ve Story tasarımlarınızı klasöre eklediğinizde burada otomatik görünecekler.")
     else:
-        # Menüyü ortalamak için boşluk kolonları
         col_s1, col_filter, col_s2 = st.columns([1, 2, 1])
         with col_filter:
             kategori = st.radio("Filtre", ["Tüm İçerikler", "Sadece Görseller", "Sadece Videolar"], horizontal=True, label_visibility="collapsed")
@@ -396,7 +466,6 @@ else:
         if not gosterilecek_dosyalar:
             st.info("Bu kategoride henüz bir tasarım bulunmuyor.")
         else:
-            # PINTEREST (MASONRY) DÜZENİ İÇİN 3 SÜTUN (Çok daha geniş ve kaliteli sunum)
             cols = st.columns(3) 
             for i, dosya in enumerate(gosterilecek_dosyalar):
                 dosya_yolu = os.path.join(medya_klasoru, dosya)
