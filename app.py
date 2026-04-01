@@ -8,7 +8,7 @@ import streamlit.components.v1 as components
 # 1. Sayfa Ayarları
 st.set_page_config(page_title="Delta Studio | Yaratıcı ve Dijital Çözümler", layout="wide", page_icon="🎬")
 
-# 2. Özel CSS: Mirket Agency Mimarisi, Modern Layout ve Tipografi
+# 2. Özel CSS: Mirket Agency Mimarisi, Modern Layout, Tipografi ve MOBİL UYUM (Responsive)
 st.markdown("""
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
@@ -23,7 +23,7 @@ st.markdown("""
     footer {visibility: hidden;}
     .block-container { padding-top: 1rem !important; max-width: 1300px; }
     
-    /* Navigasyon Barı (Mirket Tarzı Header) */
+    /* Navigasyon Barı */
     .navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #1a1a1a; margin-bottom: 60px; }
     .nav-logo h2 { margin:0; font-size:28px !important; letter-spacing: 2px; font-weight: 900 !important; }
     .nav-links { display: flex; gap: 35px; align-items: center; }
@@ -41,7 +41,7 @@ st.markdown("""
     .sec-tag { color: #E31B23; font-weight: 800; font-size: 15px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 5px; display: block; }
     .sec-title { font-size: 45px !important; font-weight: 900 !important; margin-top: 0 !important; margin-bottom: 50px !important; }
 
-    /* Hizmet Kartları (Mirket Grid) */
+    /* Hizmet Kartları */
     .service-card { background: #0d0d0d; border: 1px solid #1a1a1a; border-radius: 15px; padding: 40px 30px; transition: 0.4s ease; height: 100%; display: flex; flex-direction: column; justify-content: space-between;}
     .service-card:hover { border-color: #E31B23; transform: translateY(-10px); box-shadow: 0 15px 30px rgba(227,27,35,0.15); }
     .service-card i { font-size: 40px; color: #E31B23; margin-bottom: 25px; }
@@ -56,14 +56,14 @@ st.markdown("""
     .story-card h3 { font-size: 26px !important; margin-bottom: 10px !important; font-weight: 800 !important;}
     .story-metric { color: #E31B23; font-weight: 800; font-size: 18px; margin-bottom: 15px; display: block; }
     
-    /* Müşteri Yorumları (Testimonials) */
+    /* Müşteri Yorumları */
     .testimonial-box { background: #0f0f0f; padding: 40px; border-radius: 20px; font-style: italic; position: relative; border: 1px solid #1a1a1a; height: 100%; font-family: 'Century Gothic', sans-serif;}
     .testimonial-box::before { content: '"'; font-size: 80px; color: #E31B23; position: absolute; top: 10px; left: 20px; font-family: Georgia, serif; opacity: 0.3; }
     .testimonial-text { font-size: 16px; color: #ccc; position: relative; z-index: 1; margin-bottom: 25px; line-height: 1.7;}
     .testimonial-author { font-weight: 800; color: #fff; font-style: normal; font-size: 16px; font-family: 'Montserrat', sans-serif;}
     .testimonial-company { color: #E31B23; font-size: 14px; font-style: normal; font-weight: 600; font-family: 'Montserrat', sans-serif;}
 
-    /* Medya Galerisi (Senin Klasörün) */
+    /* Medya Galerisi */
     .media-container { background-color: #0a0a0a; padding: 5px; border-radius: 12px; border: 1px solid #1a1a1a; margin-bottom: 15px; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.4s; }
     .media-container:hover { border-color: #E31B23; transform: translateY(-8px); box-shadow: 0 12px 25px rgba(227, 27, 35, 0.25); }
 
@@ -73,7 +73,7 @@ st.markdown("""
     div[data-testid="stFormSubmitButton"] > button { background: #E31B23 !important; color: white !important; border: none !important; border-radius: 50px !important; padding: 15px 30px !important; font-weight: 800 !important; width: 100%; text-transform: uppercase; font-size: 18px !important; transition: 0.3s !important; }
     div[data-testid="stFormSubmitButton"] > button:hover { background: #b3151b !important; transform: translateY(-3px) !important; box-shadow: 0 10px 20px rgba(227,27,35,0.3) !important;}
 
-    /* Mirket Tarzı Mega Footer */
+    /* Mega Footer */
     .mega-footer { background: #050505; border-top: 1px solid #1a1a1a; padding: 80px 0 30px 0; margin-top: 100px; }
     .footer-col h4 { color: #fff; font-size: 18px !important; font-weight: 800 !important; margin-bottom: 25px !important; }
     .footer-list { list-style: none; padding: 0; margin: 0; }
@@ -83,6 +83,49 @@ st.markdown("""
     .social-icons a { color: #fff; font-size: 20px; margin-right: 15px; background: #1a1a1a; width: 40px; height: 40px; display: inline-flex; justify-content: center; align-items: center; border-radius: 50%; transition: 0.3s; }
     .social-icons a:hover { background: #E31B23; transform: translateY(-3px); }
     .footer-bottom { text-align: center; border-top: 1px solid #1a1a1a; margin-top: 60px; padding-top: 25px; color: #555; font-size: 14px; font-family: 'Century Gothic', sans-serif;}
+    
+    .footer-flex-container { display: flex; flex-wrap: wrap; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+
+    /* =====================================================================
+       MOBİL UYUM (RESPONSIVE) KALKANI - 768px Altı Ekranlar İçin Daralma 
+       ===================================================================== */
+    @media (max-width: 768px) {
+        /* Üst Menü Düzenlemesi */
+        .navbar { flex-direction: column; gap: 20px; text-align: center; padding: 15px 0; margin-bottom: 30px;}
+        .nav-links { flex-wrap: wrap; justify-content: center; gap: 15px; }
+        .nav-links a { font-size: 13px; }
+        .btn-teklif { padding: 10px 20px; font-size: 13px; }
+
+        /* Açılış (Hero) Yazı Boyutları */
+        .hero { padding: 20px 0 50px 0; text-align: center; }
+        .hero h1 { font-size: 40px !important; line-height: 1.2 !important; margin-bottom: 15px !important; letter-spacing: -1px; }
+        .hero p { font-size: 16px !important; margin: 0 auto 30px auto; }
+        
+        /* Başlıklar */
+        .sec-title { font-size: 32px !important; margin-bottom: 30px !important; text-align: center; }
+        .sec-tag { text-align: center; }
+
+        /* Kartlar ve Yorumlar */
+        .service-card { padding: 25px 20px; }
+        .service-card h3 { font-size: 20px !important; }
+        .service-card p { font-size: 14px; }
+        .service-card i { font-size: 30px; margin-bottom: 15px; }
+        
+        .story-card { padding: 20px; }
+        .story-card h3 { font-size: 20px !important; }
+        .story-metric { font-size: 15px; }
+        
+        .testimonial-box { padding: 25px; text-align: center; }
+        .testimonial-box::before { left: 50%; transform: translateX(-50%); top: -10px; font-size: 60px; }
+        .testimonial-text { font-size: 14px; margin-top: 20px;}
+        
+        /* Footer Dikey Hizalama */
+        .mega-footer { padding: 50px 0 20px 0; margin-top: 50px; text-align: center; }
+        .footer-flex-container { flex-direction: column; align-items: center; }
+        .footer-col { margin-bottom: 40px !important; min-width: 100% !important; }
+        .social-icons { justify-content: center; }
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -380,7 +423,7 @@ with st.form("contact_form", clear_on_submit=False):
 # ----------------------------------------------------
 st.markdown("""
 <div class="mega-footer">
-    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+    <div class="footer-flex-container">
         
         <div style="flex: 1; min-width: 250px; margin-bottom: 30px;">
             <h2 style="margin:0; font-size:24px !important; margin-bottom: 20px !important;">DELTA STUDIO</h2>
