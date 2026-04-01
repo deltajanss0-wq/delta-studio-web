@@ -63,9 +63,37 @@ st.markdown("""
     .testimonial-author { font-weight: 800; color: #fff; font-style: normal; font-size: 16px; font-family: 'Montserrat', sans-serif;}
     .testimonial-company { color: #E31B23; font-size: 14px; font-style: normal; font-weight: 600; font-family: 'Montserrat', sans-serif;}
 
-    /* Medya Galerisi */
-    .media-container { background-color: #0a0a0a; padding: 5px; border-radius: 12px; border: 1px solid #1a1a1a; margin-bottom: 15px; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.4s; }
-    .media-container:hover { border-color: #E31B23; transform: translateY(-8px); box-shadow: 0 12px 25px rgba(227, 27, 35, 0.25); }
+    /* =======================================================
+       YENİ PORTFÖY / MEDYA GALERİSİ TASARIMI (PINTEREST STYLE)
+       ======================================================= */
+    .media-container { 
+        background: linear-gradient(145deg, #0d0d0d, #111);
+        padding: 12px; 
+        border-radius: 20px; 
+        border: 1px solid #1a1a1a; 
+        margin-bottom: 25px; 
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    }
+    .media-container:hover { 
+        border-color: #E31B23; 
+        transform: translateY(-10px) scale(1.02); 
+        box-shadow: 0 20px 40px rgba(227, 27, 35, 0.2); 
+    }
+    .media-container img, .media-container video { 
+        border-radius: 12px !important; 
+    }
+
+    /* Kapsül Filtre Çubuğu (StRadio) */
+    div[role="radiogroup"] {
+        background: #0a0a0a;
+        padding: 10px 25px;
+        border-radius: 50px;
+        border: 1px solid #1a1a1a;
+        justify-content: center;
+        gap: 20px;
+        margin: 0 auto;
+    }
 
     /* Form Input */
     .stTextInput input, .stTextArea textarea { background-color: #0f0f0f !important; color: #fff !important; border: 1px solid #222 !important; border-radius: 10px !important; padding: 18px !important; font-size: 16px !important; font-family: 'Century Gothic', sans-serif;}
@@ -333,10 +361,10 @@ with ig_col_main:
 st.write("<br><br><br>", unsafe_allow_html=True)
 
 # ----------------------------------------------------
-# 7. MEDYA PORTFÖYÜ (DİNAMİK GALERİ)
+# 7. MEDYA PORTFÖYÜ (YENİ - PINTEREST TARZI GALERİ)
 # ----------------------------------------------------
 st.markdown("<span class='sec-tag'>#PORTFÖY</span><h2 class='sec-title'>Medya Portföyü</h2>", unsafe_allow_html=True)
-st.markdown("<p style='font-size:15px; color:#888; font-family: Century Gothic, sans-serif;'>Detaylı incelemek istediğiniz görselin sağ üst köşesindeki ikona tıklayarak tam ekran yapabilirsiniz.</p>", unsafe_allow_html=True)
+st.markdown("<p style='font-size:15px; color:#888; font-family: Century Gothic, sans-serif; margin-bottom: 30px;'>Dijital sanat eserlerimizi detaylı incelemek için görsellerin üzerine tıklayabilirsiniz.</p>", unsafe_allow_html=True)
 
 medya_klasoru = "medya"
 
@@ -349,8 +377,12 @@ else:
     if not tum_dosyalar:
         st.warning("'medya' klasörünüz şu an boş. Post ve Story tasarımlarınızı klasöre eklediğinizde burada otomatik görünecekler.")
     else:
-        kategori = st.radio("Filtre:", ["Tüm İçerikler", "Sadece Görseller", "Sadece Videolar"], horizontal=True)
-        st.write("---")
+        # Menüyü ortalamak için boşluk kolonları
+        col_s1, col_filter, col_s2 = st.columns([1, 2, 1])
+        with col_filter:
+            kategori = st.radio("Filtre", ["Tüm İçerikler", "Sadece Görseller", "Sadece Videolar"], horizontal=True, label_visibility="collapsed")
+        
+        st.write("<br><br>", unsafe_allow_html=True)
         
         gosterilecek_dosyalar = []
         for dosya in tum_dosyalar:
@@ -364,10 +396,11 @@ else:
         if not gosterilecek_dosyalar:
             st.info("Bu kategoride henüz bir tasarım bulunmuyor.")
         else:
-            cols = st.columns(4) 
+            # PINTEREST (MASONRY) DÜZENİ İÇİN 3 SÜTUN (Çok daha geniş ve kaliteli sunum)
+            cols = st.columns(3) 
             for i, dosya in enumerate(gosterilecek_dosyalar):
                 dosya_yolu = os.path.join(medya_klasoru, dosya)
-                with cols[i % 4]:
+                with cols[i % 3]:
                     st.markdown("<div class='media-container'>", unsafe_allow_html=True)
                     if dosya.lower().endswith('.mp4'):
                         st.video(dosya_yolu)
@@ -404,7 +437,6 @@ with st.form("contact_form", clear_on_submit=False):
                     st.success("Talebiniz başarıyla ulaştı. Strateji ekibimiz en kısa sürede sizinle iletişime geçecektir.")
                 else:
                     st.error(f"Sistem Hatası: {sonuc}")
-
 
 # ----------------------------------------------------
 # 9. MEGA FOOTER (MİRKET STYLE)
