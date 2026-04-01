@@ -86,7 +86,6 @@ st.markdown("""
     
     .footer-flex-container { display: flex; flex-wrap: wrap; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
-
     /* =====================================================================
        MOBİL UYUM (RESPONSIVE) KALKANI - 768px Altı Ekranlar İçin Daralma 
        ===================================================================== */
