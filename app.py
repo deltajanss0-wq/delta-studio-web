@@ -114,7 +114,7 @@ def send_email(isim, eposta, mesaj):
 st.markdown("""
 <div class="navbar">
     <div class="nav-logo">
-        <h2>DELTA STUDIO<span style="color:#E31B23;">.</span></h2>
+        <h2>DELTA STUDIO</h2>
     </div>
     <div class="nav-links">
         <a href="#hizmetler">Hizmetler</a>
@@ -302,9 +302,9 @@ with ig_col_main:
 st.write("<br><br><br>", unsafe_allow_html=True)
 
 # ----------------------------------------------------
-# 7. DİJİTAL TASARIM GALERİSİ (MEDYA KLASÖRÜ - GERİ GELDİ!)
+# 7. MEDYA PORTFÖYÜ (DİNAMİK GALERİ)
 # ----------------------------------------------------
-st.markdown("<span class='sec-tag'>#PORTFÖY</span><h2 class='sec-title'>Görsel İletişim Galerisi</h2>", unsafe_allow_html=True)
+st.markdown("<span class='sec-tag'>#PORTFÖY</span><h2 class='sec-title'>Medya Portföyü</h2>", unsafe_allow_html=True)
 st.markdown("<p style='font-size:15px; color:#888; font-family: Century Gothic, sans-serif;'>Detaylı incelemek istediğiniz görselin sağ üst köşesindeki ikona tıklayarak tam ekran yapabilirsiniz.</p>", unsafe_allow_html=True)
 
 medya_klasoru = "medya"
@@ -383,7 +383,7 @@ st.markdown("""
     <div style="display: flex; flex-wrap: wrap; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 20px;">
         
         <div style="flex: 1; min-width: 250px; margin-bottom: 30px;">
-            <h2 style="margin:0; font-size:24px !important; margin-bottom: 20px !important;">DELTA STUDIO<span style="color:#E31B23;">.</span></h2>
+            <h2 style="margin:0; font-size:24px !important; margin-bottom: 20px !important;">DELTA STUDIO</h2>
             <p style="font-size: 14px; max-width: 80%; font-family: 'Century Gothic', sans-serif;">Delta Studio, markanızın dijital varlığını güçlendiren yaratıcı bir sosyal medya ve dijital çözüm ajansı olarak hizmet vermektedir.</p>
             <div class="social-icons" style="margin-top: 20px;">
                 <a href="https://www.instagram.com/thestudiodelta/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
