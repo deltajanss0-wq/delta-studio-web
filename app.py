@@ -1,517 +1,309 @@
-import streamlit as st
+import customtkinter as ctk
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import mplcyberpunk
+import requests
 import os
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-import streamlit.components.v1 as components
+import sqlite3
+import pandas as pd
+from datetime import datetime
+from fpdf import FPDF
+import tkinter.messagebox as messagebox
+from tkinter import filedialog
+import google.generativeai as genai
 
-# 1. Sayfa Ayarları
-st.set_page_config(page_title="Delta Studio | Yaratıcı ve Dijital Çözümler", layout="wide", page_icon="🎬")
+# --- TAMAMEN FÜTÜRİSTİK SİBERPUNK TEMA ---
+ctk.set_appearance_mode("dark")
+BG_COLOR = "#020203"       
+CARD_BG = "#0a0a10"        
+CYAN_NEON = "#00f0ff"      
+GREEN_NEON = "#39ff14"     
+TEXT_MAIN = "#ffffff"
+TEXT_MUTED = "#4a4a5a"
 
-# 2. Özel CSS: Mirket Agency Mimarisi, Modern Layout, Tipografi ve MOBİL UYUM (Responsive)
-st.markdown("""
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap');
-.stApp { background-color: #050505; font-family: 'Montserrat', sans-serif; color: #fff; }
-header {visibility: hidden;}
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
-.block-container { padding-top: 1rem !important; max-width: 1300px; }
-.navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #1a1a1a; margin-bottom: 60px; }
-.nav-logo h2 { margin:0; font-size:28px !important; letter-spacing: 2px; font-weight: 900 !important; }
-.nav-links { display: flex; gap: 35px; align-items: center; }
-.nav-links a { color: #fff; text-decoration: none; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
-.nav-links a:hover { color: #E31B23; }
-.btn-teklif { background-color: #E31B23; color: #fff !important; padding: 12px 28px; border-radius: 50px; font-weight: 800 !important; transition: 0.3s; }
-.btn-teklif:hover { background-color: #b3151b; transform: scale(1.05); }
-.hero { padding: 40px 0 100px 0; position: relative; }
-.hero h1 { font-size: 70px !important; font-weight: 900 !important; line-height: 1.1 !important; margin-bottom: 25px !important; letter-spacing: -2px; }
-.hero p { font-size: 20px; color: #aaa; max-width: 650px; line-height: 1.6; margin-bottom: 40px; }
-.sec-tag { color: #E31B23; font-weight: 800; font-size: 15px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 5px; display: block; }
-.sec-title { font-size: 45px !important; font-weight: 900 !important; margin-top: 0 !important; margin-bottom: 50px !important; }
-.service-card { background: #0d0d0d; border: 1px solid #1a1a1a; border-radius: 15px; padding: 40px 30px; transition: 0.4s ease; height: 100%; display: flex; flex-direction: column; justify-content: space-between;}
-.service-card:hover { border-color: #E31B23; transform: translateY(-10px); box-shadow: 0 15px 30px rgba(227,27,35,0.15); }
-.service-card i { font-size: 40px; color: #E31B23; margin-bottom: 25px; }
-.service-card h3 { font-size: 22px !important; margin-bottom: 15px !important; font-weight: 800 !important;}
-.service-card p { font-size: 15px; color: #888; margin-bottom: 30px; line-height: 1.6; font-family: 'Century Gothic', sans-serif;}
-.service-link { color: #fff; text-decoration: none; font-weight: 700; font-size: 14px; border-bottom: 2px solid #E31B23; padding-bottom: 3px; align-self: flex-start; transition: 0.3s;}
-.service-link:hover { color: #E31B23; }
-.story-card { background: #0a0a0a; border-left: 5px solid #E31B23; border-radius: 10px; padding: 35px; margin-bottom: 25px; border-top: 1px solid #1a1a1a; border-right: 1px solid #1a1a1a; border-bottom: 1px solid #1a1a1a; transition: 0.3s;}
-.story-card:hover { transform: translateX(10px); background: #111; }
-.story-card h3 { font-size: 26px !important; margin-bottom: 10px !important; font-weight: 800 !important;}
-.story-metric { color: #E31B23; font-weight: 800; font-size: 18px; margin-bottom: 15px; display: block; }
-.testimonial-box { background: #0f0f0f; padding: 40px; border-radius: 20px; font-style: italic; position: relative; border: 1px solid #1a1a1a; height: 100%; font-family: 'Century Gothic', sans-serif;}
-.testimonial-box::before { content: '"'; font-size: 80px; color: #E31B23; position: absolute; top: 10px; left: 20px; font-family: Georgia, serif; opacity: 0.3; }
-.testimonial-text { font-size: 16px; color: #ccc; position: relative; z-index: 1; margin-bottom: 25px; line-height: 1.7;}
-.testimonial-author { font-weight: 800; color: #fff; font-style: normal; font-size: 16px; font-family: 'Montserrat', sans-serif;}
-.testimonial-company { color: #E31B23; font-size: 14px; font-style: normal; font-weight: 600; font-family: 'Montserrat', sans-serif;}
-.media-container { background: linear-gradient(145deg, #0d0d0d, #111); padding: 12px; border-radius: 20px; border: 1px solid #1a1a1a; margin-bottom: 25px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 20px rgba(0,0,0,0.5);}
-.media-container:hover { border-color: #E31B23; transform: translateY(-10px) scale(1.02); box-shadow: 0 20px 40px rgba(227, 27, 35, 0.2); }
-.media-container img, .media-container video { border-radius: 12px !important; }
-div[role="radiogroup"] { background: #0a0a0a; padding: 10px 25px; border-radius: 50px; border: 1px solid #1a1a1a; justify-content: center; gap: 20px; margin: 0 auto; }
-.stTextInput input, .stTextArea textarea { background-color: #0f0f0f !important; color: #fff !important; border: 1px solid #222 !important; border-radius: 10px !important; padding: 18px !important; font-size: 16px !important; font-family: 'Century Gothic', sans-serif;}
-.stTextInput input:focus, .stTextArea textarea:focus { border-color: #E31B23 !important; }
-div[data-testid="stFormSubmitButton"] > button { background: #E31B23 !important; color: white !important; border: none !important; border-radius: 50px !important; padding: 15px 30px !important; font-weight: 800 !important; width: 100%; text-transform: uppercase; font-size: 18px !important; transition: 0.3s !important; }
-div[data-testid="stFormSubmitButton"] > button:hover { background: #b3151b !important; transform: translateY(-3px) !important; box-shadow: 0 10px 20px rgba(227,27,35,0.3) !important;}
-.mega-footer { background: #050505; border-top: 1px solid #1a1a1a; padding: 80px 0 30px 0; margin-top: 100px; }
-.footer-col h4 { color: #fff; font-size: 18px !important; font-weight: 800 !important; margin-bottom: 25px !important; }
-.footer-list { list-style: none; padding: 0; margin: 0; }
-.footer-list li { margin-bottom: 15px; }
-.footer-list a { color: #777; text-decoration: none; font-size: 15px; transition: 0.3s; font-weight: 500; font-family: 'Century Gothic', sans-serif;}
-.footer-list a:hover { color: #E31B23; padding-left: 8px; }
-.social-icons a { color: #fff; font-size: 20px; margin-right: 15px; background: #1a1a1a; width: 40px; height: 40px; display: inline-flex; justify-content: center; align-items: center; border-radius: 50%; transition: 0.3s; }
-.social-icons a:hover { background: #E31B23; transform: translateY(-3px); }
-.footer-bottom { text-align: center; border-top: 1px solid #1a1a1a; margin-top: 60px; padding-top: 25px; color: #555; font-size: 14px; font-family: 'Century Gothic', sans-serif;}
-.footer-flex-container { display: flex; flex-wrap: wrap; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-@media (max-width: 768px) {
-    .navbar { flex-direction: column; gap: 20px; text-align: center; padding: 15px 0; margin-bottom: 30px;}
-    .nav-links { flex-wrap: wrap; justify-content: center; gap: 15px; }
-    .nav-links a { font-size: 13px; }
-    .btn-teklif { padding: 10px 20px; font-size: 13px; }
-    .hero { padding: 20px 0 50px 0; text-align: center; }
-    .hero h1 { font-size: 40px !important; line-height: 1.2 !important; margin-bottom: 15px !important; letter-spacing: -1px; }
-    .hero p { font-size: 16px !important; margin: 0 auto 30px auto; }
-    .sec-title { font-size: 32px !important; margin-bottom: 30px !important; text-align: center; }
-    .sec-tag { text-align: center; }
-    .service-card { padding: 25px 20px; }
-    .service-card h3 { font-size: 20px !important; }
-    .service-card p { font-size: 14px; }
-    .service-card i { font-size: 30px; margin-bottom: 15px; }
-    .story-card { padding: 20px; }
-    .story-card h3 { font-size: 20px !important; }
-    .story-metric { font-size: 15px; }
-    .testimonial-box { padding: 25px; text-align: center; }
-    .testimonial-box::before { left: 50%; transform: translateX(-50%); top: -10px; font-size: 60px; }
-    .testimonial-text { font-size: 14px; margin-top: 20px;}
-    .mega-footer { padding: 50px 0 20px 0; margin-top: 50px; text-align: center; }
-    .footer-flex-container { flex-direction: column; align-items: center; }
-    .footer-col { margin-bottom: 40px !important; min-width: 100% !important; }
-    .social-icons { justify-content: center; }
-    .btn-play-dino { width: 35px !important; height: 35px !important; font-size: 16px !important; margin-left: 10px !important; }
-}
-</style>
-""", unsafe_allow_html=True)
+class UltimateDesktopPanel(ctk.CTk):
+    def __init__(self):
+        super().__init__()
 
-# ---- MAİL GÖNDERME FONKSİYONU ----
-def send_email(isim, eposta, mesaj):
-    gonderici_email = "deltajanss0@gmail.com"
-    alici_email = "deltajanss0@gmail.com"
-    sifre = "orputhixhpumhuzf" 
-    msg = MIMEMultipart()
-    msg['From'] = gonderici_email
-    msg['To'] = alici_email
-    msg['Subject'] = f"Delta Studio Web: Yeni Proje Talebi - {isim}"
-    body = f"Web sitesinden yeni bir mesaj aldınız.\n\nİsim / Kurum: {isim}\nİletişim E-postası: {eposta}\n\nMesaj Detayı:\n{mesaj}"
-    msg.attach(MIMEText(body, 'plain', 'utf-8'))
-    try:
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login(gonderici_email, sifre)
-        text = msg.as_string()
-        server.sendmail(gonderici_email, alici_email, text)
-        server.quit()
-        return True
-    except Exception as e:
-        return str(e)
+        self.title("DELTA STUDIO | YZ KOMUTA MERKEZİ")
+        self.geometry("1450x900")
+        self.configure(fg_color=BG_COLOR)
 
-# ----------------------------------------------------
-# 1. NAVBAR (HEADER)
-# ----------------------------------------------------
-st.markdown("""
-<div class="navbar">
-<div class="nav-logo">
-<h2>DELTA STUDIO</h2>
-</div>
-<div class="nav-links">
-<a href="#hizmetler">Hizmetler</a>
-<a href="#hikayeler">Hikayeler</a>
-<a href="#galeri">Galeri</a>
-<a href="#iletisim" class="btn-teklif">Teklif İste</a>
-</div>
-</div>
-""", unsafe_allow_html=True)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
 
-# ----------------------------------------------------
-# 2. HERO SECTION (OYUNLAŞTIRILMIŞ EASTER EGG)
-# ----------------------------------------------------
-col_logo, col_text = st.columns([1, 4])
-with col_logo:
-    try:
-        st.image("logo.png", width=160)
-    except:
-        pass
-
-with col_text:
-    st.markdown("""
-<style>
-#dino-toggle { display: none; }
-.hero-content-wrapper { transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-.dino-game-wrapper {
-display: block;
-position: absolute;
-top: 20px;
-left: 0;
-width: 100%;
-height: 300px;
-opacity: 0;
-visibility: hidden;
-transform: translateY(30px);
-transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-border-radius: 15px;
-overflow: hidden;
-background: #f7f7f7;
-border: 2px solid #E31B23;
-box-shadow: 0 15px 35px rgba(227, 27, 35, 0.2);
-z-index: 50;
-}
-#dino-toggle:checked ~ .hero-content-wrapper { 
-opacity: 0; 
-visibility: hidden; 
-transform: translateY(-30px); 
-}
-#dino-toggle:checked ~ .dino-game-wrapper { 
-opacity: 1; 
-visibility: visible; 
-transform: translateY(0); 
-}
-.btn-play-dino {
-display: inline-flex;
-align-items: center;
-justify-content: center;
-background: #E31B23;
-color: #fff;
-width: 45px;
-height: 45px;
-border-radius: 50%;
-cursor: pointer;
-margin-left: 15px;
-font-size: 20px;
-transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-vertical-align: middle;
-box-shadow: 0 0 15px rgba(227,27,35,0.4);
-margin-bottom: 10px;
-}
-.btn-play-dino:hover { background: #b3151b; transform: scale(1.15) rotate(10deg); box-shadow: 0 0 25px rgba(227,27,35,0.7); }
-.btn-close-dino {
-position: absolute;
-top: 15px;
-right: 15px;
-background: #E31B23;
-color: white;
-padding: 8px 15px;
-border-radius: 50px;
-font-size: 12px;
-font-weight: 800;
-font-family: 'Montserrat', sans-serif;
-cursor: pointer;
-z-index: 100;
-box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-transition: 0.3s;
-}
-.btn-close-dino:hover { background: #000; }
-</style>
-<div class="hero">
-<input type="checkbox" id="dino-toggle">
-<div class="hero-content-wrapper">
-<h1>Markanızın Dijital<br><span style="color:#E31B23;">Sesini Yükseltin.</span>
-<label for="dino-toggle" class="btn-play-dino" title="Sürpriz Oyun İçin Tıkla!">
-<i class="fa-solid fa-gamepad"></i>
-</label>
-</h1>
-<p>Hedef kitlenizde yankı uyandıracak, etkileyici ve sonuç odaklı pazarlama çözümlerimizle markanızı zirveye taşıyoruz. Vizyonunuzu gerçeğe dönüştürmek için doğru yerdesiniz.</p>
-</div>
-<div class="dino-game-wrapper">
-<label for="dino-toggle" class="btn-close-dino"><i class="fa-solid fa-xmark"></i> GERİ DÖN</label>
-<iframe src="https://wayou.github.io/t-rex-runner/" width="100%" height="100%" style="border:none;"></iframe>
-</div>
-</div>
-""", unsafe_allow_html=True)
-
-st.divider()
-
-# ----------------------------------------------------
-# 3. HİZMETLER (MİRKET STYLE GRID)
-# ----------------------------------------------------
-st.markdown("""
-<div id='hizmetler'></div>
-<span class='sec-tag'>#DELTA HİZMETLER</span><h2 class='sec-title'>Kreatif Çözümler</h2>
-""", unsafe_allow_html=True)
-
-c1, c2, c3 = st.columns(3)
-
-with c1:
-    st.markdown("""
-<div class="service-card">
-<div>
-<i class="fa-solid fa-hashtag"></i>
-<h3>Sosyal Medya Yönetimi</h3>
-<p>Ruha dokunan ve ilham veren vizyonunuzu sosyal medya platformlarına yansıtıyoruz. Yaratıcı stratejilerle markanızı zirveye taşıyoruz.</p>
-</div>
-<a href="#iletisim" class="service-link">İncele <i class="fa-solid fa-arrow-right" style="font-size:12px; margin-left:5px; margin-bottom:0; display:inline;"></i></a>
-</div>
-""", unsafe_allow_html=True)
-    st.write("<br>", unsafe_allow_html=True)
-    st.markdown("""
-<div class="service-card">
-<div>
-<i class="fa-solid fa-code"></i>
-<h3>Özel Yazılım & Yasopanel</h3>
-<p>Python tabanlı özel yönetim panelleriyle seyahat acentelerinin ve işletmelerin dijital otomasyon süreçlerini kusursuzlaştırıyoruz.</p>
-</div>
-<a href="#iletisim" class="service-link">İncele <i class="fa-solid fa-arrow-right" style="font-size:12px; margin-left:5px; margin-bottom:0; display:inline;"></i></a>
-</div>
-""", unsafe_allow_html=True)
-
-with c2:
-    st.markdown("""
-<div class="service-card">
-<div>
-<i class="fa-solid fa-pen-nib"></i>
-<h3>Kurumsal Kimlik Tasarımı</h3>
-<p>Logo, menü, tabela ve dijital şablonlara kadar her detayda markanızın hikayesini anlatıyor, kurumsal algınızı güçlendiriyoruz.</p>
-</div>
-<a href="#iletisim" class="service-link">İncele <i class="fa-solid fa-arrow-right" style="font-size:12px; margin-left:5px; margin-bottom:0; display:inline;"></i></a>
-</div>
-""", unsafe_allow_html=True)
-    st.write("<br>", unsafe_allow_html=True)
-    st.markdown("""
-<div class="service-card">
-<div>
-<i class="fa-solid fa-bullseye"></i>
-<h3>Stratejik Pazarlama</h3>
-<p>Dijital dünyada hedef odaklı reklam kurguları ile markanızı daha görünür hale getiriyor, bütçenizi en verimli şekilde kullanıyoruz.</p>
-</div>
-<a href="#iletisim" class="service-link">İncele <i class="fa-solid fa-arrow-right" style="font-size:12px; margin-left:5px; margin-bottom:0; display:inline;"></i></a>
-</div>
-""", unsafe_allow_html=True)
-
-with c3:
-    st.markdown("""
-<div class="service-card">
-<div>
-<i class="fa-solid fa-video"></i>
-<h3>Video Prodüksiyon</h3>
-<p>YouTube, Reels ve reklam filmleri için global standartlarda kurgu. Etkileyici geçişler ve profesyonel color grading ile sinematik işler.</p>
-</div>
-<a href="#iletisim" class="service-link">İncele <i class="fa-solid fa-arrow-right" style="font-size:12px; margin-left:5px; margin-bottom:0; display:inline;"></i></a>
-</div>
-""", unsafe_allow_html=True)
-    st.write("<br>", unsafe_allow_html=True)
-    st.markdown("""
-<div class="service-card">
-<div>
-<i class="fa-solid fa-wand-magic-sparkles"></i>
-<h3>Kreatif İçerik Üretimi</h3>
-<p>Farklı mecralara özel konsept metinler, tasarımlar ve hedef kitleyi harekete geçirecek sanatsal bir dijital bakış açısı sunuyoruz.</p>
-</div>
-<a href="#iletisim" class="service-link">İncele <i class="fa-solid fa-arrow-right" style="font-size:12px; margin-left:5px; margin-bottom:0; display:inline;"></i></a>
-</div>
-""", unsafe_allow_html=True)
-
-st.write("<br><br><br>", unsafe_allow_html=True)
-
-# ----------------------------------------------------
-# 4. BAŞARI HİKAYELERİ (MİRKET STYLE)
-# ----------------------------------------------------
-st.markdown("""
-<div id='hikayeler'></div>
-<span class='sec-tag'>#VAKA ANALİZLERİ</span><h2 class='sec-title'>Senfonilerdeki Başarımız</h2>
-<div class="story-card">
-<span class="story-metric">Caffoine'in Sıfırdan %45 Etkileşim Artışı Hikayesi</span>
-<h3>Marka Mimarisi: Caffoine</h3>
-<p style="color:#aaa; font-family: 'Century Gothic', sans-serif;">Sıfırdan bir kahve kültürü yaratmak... Logo tasarımından kurumsal kimliğe, sosyal medya lansmanından iç mekan görsel stratejisine kadar markanın sosyal medya etkileşimi hızla artarken, dijital dünyada dev bir yankı uyandırdı.</p>
-</div>
-<div class="story-card">
-<span class="story-metric">Operasyonel Süreçlerde %60 Hızlanma Getirdi</span>
-<h3>Teknoloji: Yasopanel Yazılımı</h3>
-<p style="color:#aaa; font-family: 'Century Gothic', sans-serif;">Python tabanlı özel yönetim panelleriyle seyahat acenteleri dijitalde büyük bir başarıya imza attı. Yeniden tasarlanan altyapı, firmaların operasyonel iş yükünü hafifleterek satış grafiklerini zirveye taşıdı.</p>
-</div>
-""", unsafe_allow_html=True)
-
-st.write("<br><br><br>", unsafe_allow_html=True)
-
-# ----------------------------------------------------
-# 5. MÜŞTERİ YORUMLARI (TESTIMONIALS)
-# ----------------------------------------------------
-st.markdown("<span class='sec-tag'>#REFERANSLAR</span><h2 class='sec-title'>Ne Dediler?</h2>", unsafe_allow_html=True)
-
-t1, t2, t3 = st.columns(3)
-with t1:
-    st.markdown("""
-<div class="testimonial-box">
-<p class="testimonial-text">Sosyal medya yönetimimizi Delta ekibine emanet etmek, verdiğimiz en doğru kararlardan biriydi. Kendi ekibimizden biriymiş gibi gösterdikleri özveri için teşekkür ederiz.</p>
-<div class="testimonial-author">Keyf-i Deniz Meyhane</div>
-<div class="testimonial-company">Yönetim Ekibi</div>
-</div>
-""", unsafe_allow_html=True)
-with t2:
-    st.markdown("""
-<div class="testimonial-box">
-<p class="testimonial-text">Sosyal medya ölçümlerimiz fırladı! Delta Studio ekibi dijital ortamı gerçekten anlıyor ve markamızı hayata geçirdi.</p>
-<div class="testimonial-author">Tonoz Hotel</div>
-<div class="testimonial-company">Pazarlama Departmanı</div>
-</div>
-""", unsafe_allow_html=True)
-with t3:
-    st.markdown("""
-<div class="testimonial-box">
-<p class="testimonial-text">Delta ile işbirliğimizde, operasyonel ve dijital süreçlerimizdeki başarının mimarı oldular. Stratejik bakış açıları muazzam.</p>
-<div class="testimonial-author">Makri Travel</div>
-<div class="testimonial-company">Yönetim Kurulu</div>
-</div>
-""", unsafe_allow_html=True)
-
-st.write("<br><br><br>", unsafe_allow_html=True)
-
-# ----------------------------------------------------
-# 6. INSTAGRAM LIVE FEED
-# ----------------------------------------------------
-st.markdown("""
-<div id='galeri'></div>
-<span class='sec-tag'>#BE A SOCIAL!</span><h2 class='sec-title'>Instagram'da Biz</h2>
-""", unsafe_allow_html=True)
-
-ig_col_left, ig_col_main, ig_col_right = st.columns([1, 2, 1])
-ig_base_code = """
-<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/thestudiodelta/" data-instgrm-version="14" style=" background:#0d0d0d; border:1px solid #1a1a1a; border-radius:15px; box-shadow:0 0 10px rgba(0,0,0,0.5); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);">
-<div style="padding:16px; text-align:center;">
-<a href="https://www.instagram.com/thestudiodelta/" style=" background:#0d0d0d; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank">
-<div style="padding-top: 40px; color:#fff; font-family:Arial; font-size:16px; font-weight:bold;">📸 Delta Studio Instagram İçeriği</div>
-<div style="padding-top: 10px; color:#E31B23; font-family:Arial; font-size:14px;">Instagram'da İncele</div>
-</a>
-</div>
-</blockquote>
-<script async src="//www.instagram.com/embed.js"></script>
-"""
-with ig_col_main:
-    components.html(ig_base_code, height=450, scrolling=False)
-
-st.write("<br><br><br>", unsafe_allow_html=True)
-
-# ----------------------------------------------------
-# 7. MEDYA PORTFÖYÜ (PINTEREST TARZI GALERİ)
-# ----------------------------------------------------
-st.markdown("""
-<span class='sec-tag'>#PORTFÖY</span><h2 class='sec-title'>Medya Portföyü</h2>
-<p style='font-size:15px; color:#888; font-family: Century Gothic, sans-serif; margin-bottom: 30px;'>Dijital sanat eserlerimizi detaylı incelemek için görsellerin üzerine tıklayabilirsiniz.</p>
-""", unsafe_allow_html=True)
-
-medya_klasoru = "medya"
-
-if not os.path.exists(medya_klasoru):
-    os.makedirs(medya_klasoru)
-    st.info("Sistem 'medya' adlı bir klasör oluşturdu. Lütfen tasarımlarınızı bu klasörün içine atıp sayfayı yenileyin.")
-else:
-    tum_dosyalar = [f for f in os.listdir(medya_klasoru) if f.lower().endswith(('.png', '.jpg', '.jpeg', '.mp4'))]
-    
-    if not tum_dosyalar:
-        st.warning("'medya' klasörünüz şu an boş. Post ve Story tasarımlarınızı klasöre eklediğinizde burada otomatik görünecekler.")
-    else:
-        col_s1, col_filter, col_s2 = st.columns([1, 2, 1])
-        with col_filter:
-            kategori = st.radio("Filtre", ["Tüm İçerikler", "Sadece Görseller", "Sadece Videolar"], horizontal=True, label_visibility="collapsed")
+        self.current_company = "Tilos Travel"
+        self.current_color = CYAN_NEON
         
-        st.write("<br><br>", unsafe_allow_html=True)
+        self.google_excel_path = None
+        self.meta_excel_path = None
+        self.uploaded_image_paths = [] 
         
-        gosterilecek_dosyalar = []
-        for dosya in tum_dosyalar:
-            if kategori == "Sadece Görseller" and dosya.lower().endswith(('.png', '.jpg', '.jpeg')):
-                gosterilecek_dosyalar.append(dosya)
-            elif kategori == "Sadece Videolar" and dosya.lower().endswith('.mp4'):
-                gosterilecek_dosyalar.append(dosya)
-            elif kategori == "Tüm İçerikler":
-                gosterilecek_dosyalar.append(dosya)
+        self.config = {
+            "Makri Travel": {"renk": GREEN_NEON},
+            "Tilos Travel": {"renk": CYAN_NEON}
+        }
 
-        if not gosterilecek_dosyalar:
-            st.info("Bu kategoride henüz bir tasarım bulunmuyor.")
-        else:
-            cols = st.columns(3) 
-            for i, dosya in enumerate(gosterilecek_dosyalar):
-                dosya_yolu = os.path.join(medya_klasoru, dosya)
-                with cols[i % 3]:
-                    st.markdown("<div class='media-container'>", unsafe_allow_html=True)
-                    if dosya.lower().endswith('.mp4'):
-                        st.video(dosya_yolu)
+        self.init_database()
+        self.saved_api_key = self.load_api_key() 
+        
+        self.setup_sidebar()
+        self.setup_main_area()
+        self.switch_company("Tilos Travel")
+
+    def init_database(self):
+        self.conn = sqlite3.connect("yaso_data.db")
+        self.cursor = self.conn.cursor()
+        self.cursor.execute('''CREATE TABLE IF NOT EXISTS settings (key_name TEXT PRIMARY KEY, key_value TEXT)''')
+        self.conn.commit()
+
+    def load_api_key(self):
+        self.cursor.execute("SELECT key_value FROM settings WHERE key_name='gemini_api_key'")
+        result = self.cursor.fetchone()
+        return result[0] if result else ""
+
+    def save_api_key(self, api_key):
+        self.cursor.execute("INSERT OR REPLACE INTO settings (key_name, key_value) VALUES ('gemini_api_key', ?)", (api_key,))
+        self.conn.commit()
+
+    def setup_sidebar(self):
+        self.sidebar = ctk.CTkFrame(self, width=240, corner_radius=0, fg_color="#050508", border_width=1, border_color="#11111a")
+        self.sidebar.grid(row=0, column=0, sticky="nsew")
+        self.sidebar.grid_rowconfigure(4, weight=1)
+
+        ctk.CTkLabel(self.sidebar, text="PANEL", font=ctk.CTkFont(size=32, weight="bold", family="Courier"), text_color=TEXT_MAIN).grid(row=0, column=0, pady=(40, 40))
+
+        self.btn_tilos = ctk.CTkButton(self.sidebar, text="Tilos Travel", font=ctk.CTkFont(size=14, weight="bold"), fg_color="transparent", border_width=2, border_color=CYAN_NEON, text_color=CYAN_NEON, height=45, command=lambda: self.switch_company("Tilos Travel"))
+        self.btn_tilos.grid(row=1, column=0, padx=20, pady=10, sticky="ew")
+
+        self.btn_makri = ctk.CTkButton(self.sidebar, text="Makri Travel", font=ctk.CTkFont(size=14, weight="bold"), fg_color="transparent", border_width=2, border_color=TEXT_MUTED, text_color=TEXT_MUTED, height=45, command=lambda: self.switch_company("Makri Travel"))
+        self.btn_makri.grid(row=2, column=0, padx=20, pady=10, sticky="ew")
+
+    def setup_main_area(self):
+        self.main_frame = ctk.CTkFrame(self, corner_radius=0, fg_color=BG_COLOR)
+        self.main_frame.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")
+        self.main_frame.grid_rowconfigure(1, weight=1)
+        self.main_frame.grid_columnconfigure(0, weight=1)
+
+        ctk.CTkLabel(self.main_frame, text="KOMUTA MERKEZİ", font=ctk.CTkFont(size=28, weight="bold", family="Courier"), text_color=TEXT_MAIN).grid(row=0, column=0, padx=10, pady=(0, 20), sticky="w")
+
+        self.tabs = ctk.CTkTabview(self.main_frame, corner_radius=8, fg_color=CARD_BG, segmented_button_fg_color=BG_COLOR, text_color=TEXT_MAIN, border_width=1, border_color="#181824")
+        self.tabs.grid(row=1, column=0, sticky="nsew")
+
+        self.tabs.add("  Rapor Motoru (AI)  ") 
+        self.build_custom_report_tab() 
+
+    def build_custom_report_tab(self):
+        tab = self.tabs.tab("  Rapor Motoru (AI)  ")
+        container = ctk.CTkScrollableFrame(tab, fg_color="transparent")
+        container.pack(fill="both", expand=True, padx=20, pady=10)
+
+        ctk.CTkLabel(container, text="DELTA AI: AKILLI SUNUM MOTORU", font=ctk.CTkFont(size=24, weight="bold", family="Courier"), text_color=CYAN_NEON).grid(row=0, column=0, columnspan=3, pady=(0, 5), sticky="w")
+        
+        ctk.CTkLabel(container, text="Gemini API Key:", font=ctk.CTkFont(size=14)).grid(row=2, column=0, padx=10, pady=10, sticky="w")
+        self.api_key_entry = ctk.CTkEntry(container, width=350, fg_color="#0a0a12", border_color="#333344", show="*")
+        self.api_key_entry.grid(row=2, column=1, columnspan=2, padx=10, pady=10, sticky="w")
+        
+        if self.saved_api_key:
+            self.api_key_entry.insert(0, self.saved_api_key)
+
+        ctk.CTkLabel(container, text="Sunum Başlığı:", font=ctk.CTkFont(size=14)).grid(row=3, column=0, padx=10, pady=10, sticky="w")
+        self.report_type_entry = ctk.CTkEntry(container, width=350, fg_color="#0a0a12", border_color="#333344")
+        self.report_type_entry.insert(0, "Yapay Zeka Analizli Performans Sunumu")
+        self.report_type_entry.grid(row=3, column=1, columnspan=2, padx=10, pady=10, sticky="w")
+
+        self.btn_upload_google = ctk.CTkButton(container, text="📥 Google Ads (.xlsx)", fg_color="#1a1a24", border_width=1, border_color=TEXT_MUTED, command=self.select_google)
+        self.btn_upload_google.grid(row=4, column=0, padx=10, pady=10, sticky="w")
+        self.lbl_google_status = ctk.CTkLabel(container, text="Veri Yok", text_color=TEXT_MUTED)
+        self.lbl_google_status.grid(row=4, column=1, padx=10, pady=10, sticky="w")
+
+        self.btn_upload_meta = ctk.CTkButton(container, text="📥 Meta Ads (.xlsx)", fg_color="#1a1a24", border_width=1, border_color=TEXT_MUTED, command=self.select_meta)
+        self.btn_upload_meta.grid(row=5, column=0, padx=10, pady=10, sticky="w")
+        self.lbl_meta_status = ctk.CTkLabel(container, text="Veri Yok", text_color=TEXT_MUTED)
+        self.lbl_meta_status.grid(row=5, column=1, padx=10, pady=10, sticky="w")
+
+        self.btn_upload_image = ctk.CTkButton(container, text="🖼️ Çoklu Görsel Ekle", fg_color="#1a1a24", border_width=1, border_color=TEXT_MUTED, command=self.select_images)
+        self.btn_upload_image.grid(row=6, column=0, padx=10, pady=10, sticky="w")
+        self.lbl_image_status = ctk.CTkLabel(container, text="0 Görsel Seçildi", text_color=TEXT_MUTED)
+        self.lbl_image_status.grid(row=6, column=1, padx=10, pady=10, sticky="w")
+
+        self.btn_generate_ai = ctk.CTkButton(container, text="🧠 YZ ANALİZİ İLE PDF OLUŞTUR", font=ctk.CTkFont(size=16, weight="bold"), fg_color=self.current_color, text_color="black", hover_color="#ffffff", height=50, command=self.generate_ai_report)
+        self.btn_generate_ai.grid(row=7, column=0, columnspan=2, pady=30, sticky="ew")
+
+    def select_google(self):
+        file_path = filedialog.askopenfilename(title="Google Verisi", filetypes=[("Excel", "*.xlsx *.csv")])
+        if file_path:
+            self.google_excel_path = file_path
+            self.lbl_google_status.configure(text=os.path.basename(file_path), text_color=GREEN_NEON)
+
+    def select_meta(self):
+        file_path = filedialog.askopenfilename(title="Meta Verisi", filetypes=[("Excel", "*.xlsx *.csv")])
+        if file_path:
+            self.meta_excel_path = file_path
+            self.lbl_meta_status.configure(text=os.path.basename(file_path), text_color=GREEN_NEON)
+
+    def select_images(self):
+        file_paths = filedialog.askopenfilenames(title="Görselleri Seç", filetypes=[("Images", "*.png *.jpg *.jpeg")])
+        if file_paths:
+            self.uploaded_image_paths = list(file_paths)
+            self.lbl_image_status.configure(text=f"{len(self.uploaded_image_paths)} Görsel Yüklendi!", text_color=GREEN_NEON)
+
+    def generate_ai_report(self):
+        api_key = self.api_key_entry.get().strip()
+        if not api_key:
+            messagebox.showwarning("Eksik API", "Lütfen Gemini API Key giriniz.")
+            return
+        
+        self.save_api_key(api_key)
+            
+        if not self.google_excel_path and not self.meta_excel_path:
+            messagebox.showwarning("Veri Yok", "Analiz için en az bir Excel tablosu yüklemelisin.")
+            return
+
+        self.btn_generate_ai.configure(text="SİNİR AĞINA BAĞLANILIYOR...", fg_color="#ffcc00")
+        self.update() 
+
+        def tr_fix(text):
+            return str(text).replace('ş','s').replace('Ş','S').replace('ı','i').replace('İ','I').replace('ğ','g').replace('Ğ','G').replace('ü','u').replace('Ü','U').replace('ö','o').replace('Ö','O').replace('ç','c').replace('Ç','C')
+
+        try:
+            data_summary = ""
+            df_google, df_meta = None, None
+            
+            if self.google_excel_path:
+                df_google = pd.read_excel(self.google_excel_path).head(10) if not self.google_excel_path.endswith('.csv') else pd.read_csv(self.google_excel_path).head(10)
+                data_summary += "Google Ads/Arama Verileri:\n" + df_google.to_string() + "\n\n"
+                
+            if self.meta_excel_path:
+                df_meta = pd.read_excel(self.meta_excel_path).head(10) if not self.meta_excel_path.endswith('.csv') else pd.read_csv(self.meta_excel_path).head(10)
+                data_summary += "Meta Ads Verileri:\n" + df_meta.to_string() + "\n\n"
+
+            # İŞTE BURASI: KESİNLİKLE HATA VERMEYEN YENİ MODEL
+            genai.configure(api_key=api_key)
+            model = genai.GenerativeModel('gemini-1.5-flash') 
+            
+            prompt = f"""
+            Sen {self.current_company} adındaki seyahat acentesinin dijital pazarlama yapay zekası 'Delta'sın.
+            Patronun için aşağıdaki ham reklam verilerini incele ve ona yönelik, tamamen profesyonel, 
+            sadece 2 veya 3 kısa paragraftan oluşan, gidişatı özetleyen bir 'Yönetici Özeti' yaz.
+            Sayıları mantıklıca birleştir. Tablo çizme, sadece akıcı metin yaz.
+            Veriler:
+            {data_summary}
+            """
+            
+            response = model.generate_content(prompt)
+            ai_text = tr_fix(response.text)
+
+            pdf = FPDF()
+            pdf.add_page()
+            
+            pdf.set_fill_color(5, 5, 8)
+            pdf.rect(0, 0, 210, 297, 'F')
+            
+            pdf.set_font("Arial", 'B', 20)
+            pdf.set_text_color(255, 255, 255)
+            pdf.cell(190, 15, txt=tr_fix(self.report_type_entry.get().upper()), ln=1, align='C')
+            
+            pdf.set_text_color(100, 100, 120) 
+            pdf.set_font("Arial", 'I', 10)
+            pdf.cell(190, 8, txt=f"{self.current_company} | YZ Analiz Tarihi: {datetime.now().strftime('%d.%m.%Y %H:%M')}", ln=1, align='C')
+            pdf.ln(10)
+
+            color_rgb = (0, 240, 255) if self.current_company == "Tilos Travel" else (57, 255, 20)
+            pdf.set_text_color(*color_rgb)
+            pdf.set_font("Arial", 'B', 14)
+            pdf.cell(190, 10, txt="DELTA AI: YONETICI OZETI", ln=1, align='L')
+            
+            pdf.set_text_color(220, 220, 220)
+            pdf.set_font("Arial", '', 11)
+            pdf.multi_cell(190, 7, txt=ai_text)
+            pdf.ln(10)
+
+            def draw_table(df, title, rgb):
+                pdf.set_text_color(*rgb)
+                pdf.set_draw_color(*rgb)
+                pdf.set_font("Arial", 'B', 12)
+                pdf.cell(190, 10, txt=title, ln=1)
+                
+                col_w = 190 / (len(df.columns) if len(df.columns) > 0 else 1)
+                
+                pdf.set_fill_color(20, 20, 30) 
+                pdf.set_text_color(255, 255, 255)
+                pdf.set_font("Arial", 'B', 8)
+                for col in df.columns:
+                    pdf.cell(col_w, 7, tr_fix(str(col))[:20], border=1, fill=True, align='C')
+                pdf.ln()
+                
+                pdf.set_font("Arial", '', 7)
+                pdf.set_fill_color(10, 10, 15)
+                for _, row in df.iterrows():
+                    for val in row:
+                        pdf.cell(col_w, 7, tr_fix(str(val))[:25], border=1, fill=True, align='C') 
+                    pdf.ln()
+                pdf.ln(5)
+
+            if df_google is not None: draw_table(df_google, "Google Arama/Ads Verileri", color_rgb)
+            if df_meta is not None: draw_table(df_meta, "Meta Ads Verileri", (255, 20, 147))
+
+            if self.uploaded_image_paths:
+                pdf.add_page() 
+                pdf.set_fill_color(5, 5, 8)
+                pdf.rect(0, 0, 210, 297, 'F')
+                
+                pdf.set_text_color(*color_rgb)
+                pdf.set_font("Arial", 'B', 14)
+                pdf.cell(190, 10, txt="PERFORMANS GRAFIKLERI & GORSELLER", ln=1, align='C')
+                pdf.ln(5)
+
+                x_start = 15
+                y_start = pdf.get_y()
+                img_width = 85 
+                img_height = 60 
+                
+                x, y = x_start, y_start
+                
+                for i, img_path in enumerate(self.uploaded_image_paths):
+                    if y + img_height > 270:
+                        pdf.add_page()
+                        pdf.set_fill_color(5, 5, 8)
+                        pdf.rect(0, 0, 210, 297, 'F')
+                        y = 20
+                        x = x_start
+                    
+                    try:
+                        pdf.image(img_path, x=x, y=y, w=img_width)
+                    except:
+                        pass 
+                    
+                    if (i + 1) % 2 == 0:
+                        x = x_start
+                        y += img_height + 10 
                     else:
-                        st.image(dosya_yolu, use_container_width=True)
-                    st.markdown("</div>", unsafe_allow_html=True)
+                        x += img_width + 10 
 
-st.write("<br><br><br>", unsafe_allow_html=True)
+            file_name = f"AI_Rapor_{self.current_company.replace(' ', '_')}_{datetime.now().strftime('%H%M%S')}.pdf"
+            pdf.output(file_name)
+            
+            self.btn_generate_ai.configure(text="🔥 YZ ANALİZİ İLE PDF OLUŞTUR", fg_color=self.current_color)
+            messagebox.showinfo("Başarılı", f"Delta AI raporu yazdı ve görselleri dizdi!\n\nDosya: {file_name}")
+            
+        except Exception as e:
+            self.btn_generate_ai.configure(text="🔥 YZ ANALİZİ İLE PDF OLUŞTUR", fg_color=self.current_color)
+            messagebox.showerror("Yapay Zeka Hatası", f"İşlem sırasında bir sorun oluştu.\nDetay: {str(e)}")
 
-# ----------------------------------------------------
-# 8. TEKLİF İSTE (CONTACT FORM)
-# ----------------------------------------------------
-st.markdown("""
-<div id='iletisim'></div>
-<span class='sec-tag'>#İLETİŞİM</span><h2 class='sec-title'>Dijital Geleceğinizi Beraber Yazalım</h2>
-""", unsafe_allow_html=True)
-
-with st.form("contact_form", clear_on_submit=False):
-    col_f1, col_f2 = st.columns(2)
-    with col_f1:
-        input_isim = st.text_input("Adınız Soyadınız / Markanız")
-    with col_f2:
-        input_email = st.text_input("E-posta Adresiniz")
-        
-    input_mesaj = st.text_area("Proje Detayları ve Hedefleriniz", height=150)
-    
-    submit_btn = st.form_submit_button("TEKLİF İSTE")
-    
-    if submit_btn:
-        if not input_isim or not input_email or not input_mesaj:
-            st.warning("Lütfen tüm alanları doldurunuz.")
+    def switch_company(self, company):
+        self.current_company = company
+        if company == "Tilos Travel":
+            self.current_color = CYAN_NEON
+            self.btn_tilos.configure(border_color=CYAN_NEON, text_color=CYAN_NEON)
+            self.btn_makri.configure(border_color=TEXT_MUTED, text_color=TEXT_MUTED)
         else:
-            with st.spinner("Talebiniz uzman ekibimize iletiliyor..."):
-                sonuc = send_email(input_isim, input_email, input_mesaj)
-                if sonuc is True:
-                    st.success("Talebiniz başarıyla ulaştı. Strateji ekibimiz en kısa sürede sizinle iletişime geçecektir.")
-                else:
-                    st.error(f"Sistem Hatası: {sonuc}")
+            self.current_color = GREEN_NEON
+            self.btn_makri.configure(border_color=GREEN_NEON, text_color=GREEN_NEON)
+            self.btn_tilos.configure(border_color=TEXT_MUTED, text_color=TEXT_MUTED)
+            
+        self.tabs.configure(segmented_button_selected_color=self.current_color)
 
-# ----------------------------------------------------
-# 9. MEGA FOOTER (MİRKET STYLE)
-# ----------------------------------------------------
-st.markdown("""
-<div class="mega-footer">
-<div class="footer-flex-container">
-<div style="flex: 1; min-width: 250px; margin-bottom: 30px;">
-<h2 style="margin:0; font-size:24px !important; margin-bottom: 20px !important;">DELTA STUDIO</h2>
-<p style="font-size: 14px; max-width: 80%; font-family: 'Century Gothic', sans-serif;">Delta Studio, markanızın dijital varlığını güçlendiren yaratıcı bir sosyal medya ve dijital çözüm ajansı olarak hizmet vermektedir.</p>
-<div class="social-icons" style="margin-top: 20px;">
-<a href="https://www.instagram.com/thestudiodelta/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-<a href="https://www.youtube.com/@DeltaAjanss" target="_blank"><i class="fa-brands fa-youtube"></i></a>
-<a href="https://www.facebook.com/profile.php?id=61586644564480" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
-</div>
-</div>
-<div style="flex: 1; min-width: 200px; margin-bottom: 30px;" class="footer-col">
-<h4>Bizi Tanıyın</h4>
-<ul class="footer-list">
-<li><a href="#hizmetler">Biz Kimiz?</a></li>
-<li><a href="#hikayeler">Başarı Hikayeleri</a></li>
-<li><a href="#galeri">Medya Portföyü</a></li>
-<li><a href="#iletisim">Teklif İste</a></li>
-</ul>
-</div>
-<div style="flex: 1; min-width: 200px; margin-bottom: 30px;" class="footer-col">
-<h4>Hizmetlerimiz</h4>
-<ul class="footer-list">
-<li><a href="#hizmetler">Sosyal Medya Yönetimi</a></li>
-<li><a href="#hizmetler">Kurumsal Kimlik Tasarımı</a></li>
-<li><a href="#hizmetler">Video Prodüksiyon</a></li>
-<li><a href="#hizmetler">Özel Yazılım Çözümleri</a></li>
-</ul>
-</div>
-<div style="flex: 1; min-width: 200px; margin-bottom: 30px;" class="footer-col">
-<h4>İletişim Bilgileri</h4>
-<ul class="footer-list">
-<li><a href="mailto:deltajanss0@gmail.com"><i class="fa-regular fa-envelope" style="margin-right: 10px; color:#E31B23;"></i> deltajanss0@gmail.com</a></li>
-<li><a href="#"><i class="fa-solid fa-location-dot" style="margin-right: 10px; color:#E31B23;"></i> Fethiye, Muğla / Türkiye</a></li>
-</ul>
-</div>
-</div>
-<div class="footer-bottom">
-<p style="margin: 0; font-size:13px;">© 2026 Delta Studio. Yaratıcı ve Dijital Çözümler. Tüm Hakları Saklıdır.</p>
-</div>
-</div>
-""", unsafe_allow_html=True)
+if __name__ == "__main__":
+    app = UltimateDesktopPanel()
+    app.mainloop()
