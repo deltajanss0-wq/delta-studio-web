@@ -5,375 +5,513 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import streamlit.components.v1 as components
 
-st.set_page_config(
-    page_title="Delta Studio | Yaratıcı ve Dijital Çözümler",
-    layout="wide",
-    page_icon="🎬",
-    initial_sidebar_state="collapsed",
-)
+# 1. Sayfa Ayarları
+st.set_page_config(page_title="Delta Studio | Yaratıcı ve Dijital Çözümler", layout="wide", page_icon="🎬")
 
+# 2. Özel CSS: Mirket Agency Mimarisi, Modern Layout, Tipografi ve MOBİL UYUM (Responsive)
 st.markdown("""
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body,.stApp{font-family:'Space Grotesk',sans-serif;background:#040410;color:#c0cce0;overflow-x:hidden}
-#MainMenu,header[data-testid="stHeader"],footer{visibility:hidden !important}
-.block-container{padding:0 !important;max-width:100% !important}
-section[data-testid="stSidebar"]{display:none !important}
-div[data-testid="stDecoration"]{display:none !important}
-.stMarkdown{position:relative;z-index:1}
-.ds-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 900px 700px at 10% 5%,rgba(0,212,255,.06) 0%,transparent 70%),radial-gradient(ellipse 700px 900px at 90% 95%,rgba(123,47,255,.08) 0%,transparent 70%),radial-gradient(ellipse 500px 500px at 55% 45%,rgba(255,0,110,.04) 0%,transparent 70%),#040410}
-.ds-grid-lines{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(0,212,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,.025) 1px,transparent 1px);background-size:72px 72px}
-h1,h2,h3,h4,h5{font-family:'Orbitron',sans-serif}
-.ds-tag{display:inline-flex;align-items:center;gap:10px;font-family:'Share Tech Mono',monospace;font-size:10px;color:#00d4ff;letter-spacing:4px;text-transform:uppercase;margin-bottom:18px}
-.ds-tag::before{content:'//';opacity:.45}
-.ds-tag::after{content:'';width:48px;height:1px;background:linear-gradient(90deg,#00d4ff,transparent)}
-.ds-heading{font-family:'Orbitron',sans-serif;font-size:clamp(26px,3vw,46px);font-weight:900;color:#fff;line-height:1.15;margin-bottom:18px;letter-spacing:.5px}
-.ds-heading .grad{background:linear-gradient(135deg,#00d4ff 0%,#7b2fff 55%,#ff006e 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.ds-heading .stroke{color:transparent;-webkit-text-stroke:1.5px #00d4ff}
-.ds-lead{font-size:16px;color:rgba(192,204,224,.55);line-height:1.85;max-width:580px}
-.ds-nav{position:sticky;top:0;z-index:999;height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 72px;background:rgba(4,4,16,.82);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(0,212,255,.12)}
-.ds-nav-logo{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;letter-spacing:5px;text-transform:uppercase;color:#fff;display:flex;align-items:center;gap:8px}
-.ds-nav-logo::before{content:'◈';font-size:16px;color:#00d4ff}
-.ds-nav-logo em{color:#00d4ff;font-style:normal}
-.ds-nav-links{display:flex;align-items:center;gap:36px}
-.ds-nav-links a{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:rgba(192,204,224,.65);text-decoration:none;transition:color .3s;position:relative}
-.ds-nav-links a::after{content:'';position:absolute;bottom:-6px;left:0;width:0;height:1px;background:linear-gradient(90deg,#00d4ff,#7b2fff);transition:width .3s}
-.ds-nav-links a:hover{color:#00d4ff}
-.ds-nav-links a:hover::after{width:100%}
-.ds-nav-cta{border:1px solid rgba(0,212,255,.5) !important;color:#00d4ff !important;padding:7px 22px !important;border-radius:4px !important;transition:all .3s !important}
-.ds-nav-cta:hover{background:rgba(0,212,255,.08) !important;box-shadow:0 0 18px rgba(0,212,255,.25) !important;color:#fff !important}
-.ds-hero{min-height:calc(100vh - 70px);display:flex;align-items:center;padding:100px 72px 120px;position:relative;overflow:hidden;z-index:1}
-.ds-hero-content{max-width:700px}
-.ds-hero-badge{display:inline-flex;align-items:center;gap:10px;background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.2);padding:9px 22px;border-radius:100px;font-family:'Share Tech Mono',monospace;font-size:10px;color:#00d4ff;letter-spacing:3.5px;text-transform:uppercase;margin-bottom:36px}
-.ds-hero-badge::before{content:'';width:7px;height:7px;border-radius:50%;background:#00d4ff;animation:blink 2s ease-in-out infinite}
-@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.75)}}
-.ds-hero-title{font-family:'Orbitron',sans-serif;font-size:clamp(42px,5.5vw,86px);font-weight:900;line-height:1.08;color:#fff;letter-spacing:-1px;margin-bottom:28px}
-.ds-hero-title .grad-line{display:block;background:linear-gradient(135deg,#00d4ff 0%,#7b2fff 50%,#ff006e 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.ds-hero-sub{font-size:17px;color:rgba(192,204,224,.5);line-height:1.9;max-width:500px;margin-bottom:52px}
-.ds-hero-btns{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
-.ds-btn-primary{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#00d4ff,#7b2fff);color:#fff;padding:15px 38px;border-radius:6px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;transition:all .35s;box-shadow:0 8px 32px rgba(0,212,255,.2)}
-.ds-btn-primary:hover{transform:translateY(-3px);box-shadow:0 16px 48px rgba(0,212,255,.35);filter:brightness(1.1)}
-.ds-btn-ghost{display:inline-flex;align-items:center;gap:10px;background:transparent;color:rgba(192,204,224,.75);padding:15px 38px;border-radius:6px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;border:1px solid rgba(192,204,224,.15);transition:all .3s}
-.ds-btn-ghost:hover{border-color:rgba(192,204,224,.4);color:#fff}
-.ds-hero-stats{display:flex;gap:52px;margin-top:68px;padding-top:52px;border-top:1px solid rgba(192,204,224,.07);flex-wrap:wrap}
-.ds-stat-val{font-family:'Orbitron',sans-serif;font-size:34px;font-weight:900;color:#fff;line-height:1}
-.ds-stat-val em{color:#00d4ff;font-style:normal}
-.ds-stat-lbl{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(192,204,224,.38);letter-spacing:2.5px;text-transform:uppercase;margin-top:7px}
-.ds-orbs{position:absolute;right:0;top:50%;transform:translateY(-50%);width:560px;height:560px;pointer-events:none;opacity:.18}
-.ds-orb{position:absolute;border-radius:50%;animation:float 9s ease-in-out infinite}
-.ds-orb-1{width:380px;height:380px;background:radial-gradient(circle,#00d4ff,transparent 68%);top:0;right:0;animation-delay:0s}
-.ds-orb-2{width:280px;height:280px;background:radial-gradient(circle,#7b2fff,transparent 68%);bottom:0;right:90px;animation-delay:2.5s}
-.ds-orb-3{width:190px;height:190px;background:radial-gradient(circle,#ff006e,transparent 68%);top:90px;right:180px;animation-delay:5s}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-28px)}}
-.ds-section{padding:120px 72px;position:relative;z-index:1}
-.ds-section.dim{background:rgba(255,255,255,.012)}
-.ds-sec-hdr{margin-bottom:72px}
-.ds-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,255,.13),transparent);margin:0 72px;position:relative;z-index:1}
-.ds-srv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-.ds-srv-card{background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:42px 38px 56px;position:relative;overflow:hidden;transition:all .4s cubic-bezier(.25,.46,.45,.94);cursor:default}
-.ds-srv-card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,#00d4ff 50%,transparent 100%);opacity:0;transition:opacity .4s}
-.ds-srv-card:hover{background:rgba(0,212,255,.038);border-color:rgba(0,212,255,.22);transform:translateY(-10px);box-shadow:0 36px 72px rgba(0,0,0,.5),0 0 0 1px rgba(0,212,255,.1)}
-.ds-srv-card:hover::after{opacity:1}
-.ds-srv-icon{width:58px;height:58px;background:rgba(0,212,255,.09);border:1px solid rgba(0,212,255,.18);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:26px;transition:all .4s}
-.ds-srv-card:hover .ds-srv-icon{background:rgba(0,212,255,.14);box-shadow:0 0 24px rgba(0,212,255,.25)}
-.ds-srv-num{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(0,212,255,.38);letter-spacing:2.5px;margin-bottom:12px}
-.ds-srv-title{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;color:#fff;margin-bottom:14px;line-height:1.45;letter-spacing:.3px}
-.ds-srv-desc{font-size:13.5px;color:rgba(192,204,224,.48);line-height:1.75}
-.ds-srv-arrow{position:absolute;bottom:30px;right:30px;width:34px;height:34px;border:1px solid rgba(0,212,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#00d4ff;font-size:15px;opacity:0;transform:translateX(-12px);transition:all .35s}
-.ds-srv-card:hover .ds-srv-arrow{opacity:1;transform:translateX(0)}
-.ds-case-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
-.ds-case-card{background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:52px;position:relative;overflow:hidden;transition:all .4s}
-.ds-case-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#00d4ff,#7b2fff,#ff006e);transform:scaleX(0);transform-origin:left;transition:transform .5s ease}
-.ds-case-card:hover{background:rgba(0,212,255,.028);border-color:rgba(0,212,255,.16);transform:translateY(-5px)}
-.ds-case-card:hover::after{transform:scaleX(1)}
-.ds-case-client{font-family:'Share Tech Mono',monospace;font-size:10px;color:#00d4ff;letter-spacing:3.5px;text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:8px}
-.ds-case-client::before{content:'//';opacity:.45}
-.ds-case-title{font-family:'Orbitron',sans-serif;font-size:19px;font-weight:700;color:#fff;margin-bottom:16px;line-height:1.35}
-.ds-case-desc{font-size:14px;color:rgba(192,204,224,.5);line-height:1.82;margin-bottom:36px}
-.ds-metrics{display:flex;gap:36px;flex-wrap:wrap}
-.ds-metric-val{font-family:'Orbitron',sans-serif;font-size:30px;font-weight:900;background:linear-gradient(135deg,#00d4ff,#7b2fff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
-.ds-metric-lbl{font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(192,204,224,.38);letter-spacing:1.5px;text-transform:uppercase;margin-top:6px}
-.ds-testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-.ds-testi-card{background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:42px;position:relative;transition:all .4s}
-.ds-testi-card::before{content:'"';position:absolute;top:16px;left:38px;font-family:'Orbitron',sans-serif;font-size:100px;font-weight:900;color:#00d4ff;opacity:.08;line-height:1;pointer-events:none}
-.ds-testi-card:hover{background:rgba(123,47,255,.04);border-color:rgba(123,47,255,.22);transform:translateY(-7px);box-shadow:0 24px 56px rgba(123,47,255,.12)}
-.ds-stars{color:#00d4ff;font-size:14px;letter-spacing:2px;margin-bottom:22px}
-.ds-testi-text{font-size:14.5px;color:rgba(192,204,224,.68);line-height:1.82;font-style:italic;margin-bottom:30px}
-.ds-testi-author{display:flex;align-items:center;gap:14px}
-.ds-avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#00d4ff,#7b2fff);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:17px;font-weight:700;color:#fff;flex-shrink:0}
-.ds-author-name{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:#fff}
-.ds-author-co{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(0,212,255,.55);letter-spacing:1.5px;margin-top:3px}
-.ds-contact-wrap{display:grid;grid-template-columns:1fr 1.2fr;gap:88px;align-items:start}
-.ds-contact-item{display:flex;align-items:flex-start;gap:18px;margin-bottom:30px}
-.ds-ci-icon{width:50px;height:50px;background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.18);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.ds-ci-label{font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(0,212,255,.55);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:5px}
-.ds-ci-val{font-size:15px;color:rgba(192,204,224,.82)}
-.stTextInput>label,.stTextArea>label{font-family:'Share Tech Mono',monospace !important;font-size:10px !important;color:rgba(0,212,255,.6) !important;letter-spacing:2.5px !important;text-transform:uppercase !important}
-.stTextInput>div>div>input,.stTextArea>div>div>textarea{background:rgba(255,255,255,.03) !important;border:1px solid rgba(255,255,255,.08) !important;border-radius:8px !important;color:#c0cce0 !important;font-family:'Space Grotesk',sans-serif !important;font-size:15px !important;caret-color:#00d4ff !important;transition:all .3s !important}
-.stTextInput>div>div>input:focus,.stTextArea>div>div>textarea:focus{border-color:rgba(0,212,255,.4) !important;background:rgba(0,212,255,.04) !important;box-shadow:0 0 0 3px rgba(0,212,255,.1) !important;outline:none !important}
-div[data-testid="stFormSubmitButton"]>button{background:linear-gradient(135deg,#00d4ff,#7b2fff) !important;color:#fff !important;border:none !important;border-radius:8px !important;padding:16px 0 !important;width:100% !important;font-family:'Space Grotesk',sans-serif !important;font-size:13px !important;font-weight:700 !important;letter-spacing:2.5px !important;text-transform:uppercase !important;cursor:pointer !important;transition:all .3s !important}
-div[data-testid="stFormSubmitButton"]>button:hover{opacity:.9 !important;box-shadow:0 10px 36px rgba(0,212,255,.35) !important;transform:translateY(-2px) !important}
-.stSelectbox>label{font-family:'Share Tech Mono',monospace !important;font-size:10px !important;color:rgba(0,212,255,.6) !important;letter-spacing:2.5px !important;text-transform:uppercase !important}
-.ds-footer{background:rgba(255,255,255,.012);border-top:1px solid rgba(255,255,255,.05);padding:88px 72px 42px;position:relative;z-index:1}
-.ds-footer-grid{display:grid;grid-template-columns:2.2fr 1fr 1fr 1fr;gap:56px;margin-bottom:72px}
-.ds-footer-logo{font-family:'Orbitron',sans-serif;font-size:19px;font-weight:900;letter-spacing:5px;color:#fff;margin-bottom:22px}
-.ds-footer-logo em{color:#00d4ff;font-style:normal}
-.ds-footer-desc{font-size:13.5px;color:rgba(192,204,224,.38);line-height:1.85;max-width:290px;margin-bottom:30px}
-.ds-socials{display:flex;gap:12px}
-.ds-social{width:42px;height:42px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:9px;display:flex;align-items:center;justify-content:center;color:rgba(192,204,224,.45);text-decoration:none;font-size:16px;transition:all .3s}
-.ds-social:hover{background:rgba(0,212,255,.1);border-color:rgba(0,212,255,.3);color:#00d4ff;transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,212,255,.2)}
-.ds-footer-col h5{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;color:#fff;letter-spacing:3px;text-transform:uppercase;margin-bottom:26px}
-.ds-footer-links{display:flex;flex-direction:column;gap:14px}
-.ds-footer-links a{font-size:13.5px;color:rgba(192,204,224,.38);text-decoration:none;display:flex;align-items:center;gap:8px;transition:color .3s}
-.ds-footer-links a::before{content:'›';color:#00d4ff;opacity:0;transition:opacity .3s}
-.ds-footer-links a:hover{color:rgba(192,204,224,.8)}
-.ds-footer-links a:hover::before{opacity:1}
-.ds-footer-bottom{border-top:1px solid rgba(255,255,255,.05);padding-top:34px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
-.ds-copy{font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(192,204,224,.22);letter-spacing:1px}
-.ds-status{display:flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(192,204,224,.22);letter-spacing:1px}
-.ds-status::before{content:'';width:7px;height:7px;border-radius:50%;background:#00d4ff;animation:blink 2s ease-in-out infinite}
-.stImage img{border-radius:14px !important;border:1px solid rgba(255,255,255,.06) !important;transition:all .4s ease !important}
-.stSuccess>div{background:rgba(0,212,255,.08) !important;border:1px solid rgba(0,212,255,.25) !important;border-radius:10px !important;color:#00d4ff !important}
-.stError>div{background:rgba(255,0,110,.08) !important;border:1px solid rgba(255,0,110,.25) !important;border-radius:10px !important}
-.stInfo>div{background:rgba(123,47,255,.08) !important;border:1px solid rgba(123,47,255,.25) !important;border-radius:10px !important}
-@media(max-width:900px){.ds-nav{padding:0 24px}.ds-hero{padding:72px 24px 88px}.ds-section{padding:80px 24px}.ds-divider{margin:0 24px}.ds-footer{padding:72px 24px 36px}.ds-srv-grid{grid-template-columns:1fr}.ds-case-grid{grid-template-columns:1fr}.ds-testi-grid{grid-template-columns:1fr}.ds-contact-wrap{grid-template-columns:1fr;gap:48px}.ds-footer-grid{grid-template-columns:1fr 1fr;gap:32px}.ds-hero-title{font-size:clamp(36px,9vw,56px)}.ds-hero-stats{gap:28px}.ds-orbs{opacity:.08}.ds-nav-links{display:none}}
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap');
+.stApp { background-color: #050505; font-family: 'Montserrat', sans-serif; color: #fff; }
+header {visibility: hidden;}
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+.block-container { padding-top: 1rem !important; max-width: 1300px; }
+.navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #1a1a1a; margin-bottom: 60px; }
+.nav-logo h2 { margin:0; font-size:28px !important; letter-spacing: 2px; font-weight: 900 !important; }
+.nav-links { display: flex; gap: 35px; align-items: center; }
+.nav-links a { color: #fff; text-decoration: none; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
+.nav-links a:hover { color: #E31B23; }
+.btn-teklif { background-color: #E31B23; color: #fff !important; padding: 12px 28px; border-radius: 50px; font-weight: 800 !important; transition: 0.3s; }
+.btn-teklif:hover { background-color: #b3151b; transform: scale(1.05); }
+.hero { padding: 40px 0 100px 0; position: relative; }
+.hero h1 { font-size: 70px !important; font-weight: 900 !important; line-height: 1.1 !important; margin-bottom: 25px !important; letter-spacing: -2px; }
+.hero p { font-size: 20px; color: #aaa; max-width: 650px; line-height: 1.6; margin-bottom: 40px; }
+.sec-tag { color: #E31B23; font-weight: 800; font-size: 15px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 5px; display: block; }
+.sec-title { font-size: 45px !important; font-weight: 900 !important; margin-top: 0 !important; margin-bottom: 50px !important; }
+.service-card { background: #0d0d0d; border: 1px solid #1a1a1a; border-radius: 15px; padding: 40px 30px; transition: 0.4s ease; height: 100%; display: flex; flex-direction: column; justify-content: space-between;}
+.service-card:hover { border-color: #E31B23; transform: translateY(-10px); box-shadow: 0 15px 30px rgba(227,27,35,0.15); }
+.service-card i { font-size: 40px; color: #E31B23; margin-bottom: 25px; }
+.service-card h3 { font-size: 22px !important; margin-bottom: 15px !important; font-weight: 800 !important;}
+.service-card p { font-size: 15px; color: #888; margin-bottom: 30px; line-height: 1.6; font-family: 'Century Gothic', sans-serif;}
+.service-link { color: #fff; text-decoration: none; font-weight: 700; font-size: 14px; border-bottom: 2px solid #E31B23; padding-bottom: 3px; align-self: flex-start; transition: 0.3s;}
+.service-link:hover { color: #E31B23; }
+.story-card { background: #0a0a0a; border-left: 5px solid #E31B23; border-radius: 10px; padding: 35px; margin-bottom: 25px; border-top: 1px solid #1a1a1a; border-right: 1px solid #1a1a1a; border-bottom: 1px solid #1a1a1a; transition: 0.3s;}
+.story-card:hover { transform: translateX(10px); background: #111; }
+.story-card h3 { font-size: 26px !important; margin-bottom: 10px !important; font-weight: 800 !important;}
+.story-metric { color: #E31B23; font-weight: 800; font-size: 18px; margin-bottom: 15px; display: block; }
+.testimonial-box { background: #0f0f0f; padding: 40px; border-radius: 20px; font-style: italic; position: relative; border: 1px solid #1a1a1a; height: 100%; font-family: 'Century Gothic', sans-serif;}
+.testimonial-box::before { content: '"'; font-size: 80px; color: #E31B23; position: absolute; top: 10px; left: 20px; font-family: Georgia, serif; opacity: 0.3; }
+.testimonial-text { font-size: 16px; color: #ccc; position: relative; z-index: 1; margin-bottom: 25px; line-height: 1.7;}
+.testimonial-author { font-weight: 800; color: #fff; font-style: normal; font-size: 16px; font-family: 'Montserrat', sans-serif;}
+.testimonial-company { color: #E31B23; font-size: 14px; font-style: normal; font-weight: 600; font-family: 'Montserrat', sans-serif;}
+.media-container { background: linear-gradient(145deg, #0d0d0d, #111); padding: 12px; border-radius: 20px; border: 1px solid #1a1a1a; margin-bottom: 25px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 20px rgba(0,0,0,0.5);}
+.media-container:hover { border-color: #E31B23; transform: translateY(-10px) scale(1.02); box-shadow: 0 20px 40px rgba(227, 27, 35, 0.2); }
+.media-container img, .media-container video { border-radius: 12px !important; }
+div[role="radiogroup"] { background: #0a0a0a; padding: 10px 25px; border-radius: 50px; border: 1px solid #1a1a1a; justify-content: center; gap: 20px; margin: 0 auto; }
+.stTextInput input, .stTextArea textarea { background-color: #0f0f0f !important; color: #fff !important; border: 1px solid #222 !important; border-radius: 10px !important; padding: 18px !important; font-size: 16px !important; font-family: 'Century Gothic', sans-serif;}
+.stTextInput input:focus, .stTextArea textarea:focus { border-color: #E31B23 !important; }
+div[data-testid="stFormSubmitButton"] > button { background: #E31B23 !important; color: white !important; border: none !important; border-radius: 50px !important; padding: 15px 30px !important; font-weight: 800 !important; width: 100%; text-transform: uppercase; font-size: 18px !important; transition: 0.3s !important; }
+div[data-testid="stFormSubmitButton"] > button:hover { background: #b3151b !important; transform: translateY(-3px) !important; box-shadow: 0 10px 20px rgba(227,27,35,0.3) !important;}
+.mega-footer { background: #050505; border-top: 1px solid #1a1a1a; padding: 80px 0 30px 0; margin-top: 100px; }
+.footer-col h4 { color: #fff; font-size: 18px !important; font-weight: 800 !important; margin-bottom: 25px !important; }
+.footer-list { list-style: none; padding: 0; margin: 0; }
+.footer-list li { margin-bottom: 15px; }
+.footer-list a { color: #777; text-decoration: none; font-size: 15px; transition: 0.3s; font-weight: 500; font-family: 'Century Gothic', sans-serif;}
+.footer-list a:hover { color: #E31B23; padding-left: 8px; }
+.social-icons a { color: #fff; font-size: 20px; margin-right: 15px; background: #1a1a1a; width: 40px; height: 40px; display: inline-flex; justify-content: center; align-items: center; border-radius: 50%; transition: 0.3s; }
+.social-icons a:hover { background: #E31B23; transform: translateY(-3px); }
+.footer-bottom { text-align: center; border-top: 1px solid #1a1a1a; margin-top: 60px; padding-top: 25px; color: #555; font-size: 14px; font-family: 'Century Gothic', sans-serif;}
+.footer-flex-container { display: flex; flex-wrap: wrap; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+@media (max-width: 768px) {
+    .navbar { flex-direction: column; gap: 20px; text-align: center; padding: 15px 0; margin-bottom: 30px;}
+    .nav-links { flex-wrap: wrap; justify-content: center; gap: 15px; }
+    .nav-links a { font-size: 13px; }
+    .btn-teklif { padding: 10px 20px; font-size: 13px; }
+    .hero { padding: 20px 0 50px 0; text-align: center; }
+    .hero h1 { font-size: 40px !important; line-height: 1.2 !important; margin-bottom: 15px !important; letter-spacing: -1px; }
+    .hero p { font-size: 16px !important; margin: 0 auto 30px auto; }
+    .sec-title { font-size: 32px !important; margin-bottom: 30px !important; text-align: center; }
+    .sec-tag { text-align: center; }
+    .service-card { padding: 25px 20px; }
+    .service-card h3 { font-size: 20px !important; }
+    .service-card p { font-size: 14px; }
+    .service-card i { font-size: 30px; margin-bottom: 15px; }
+    .story-card { padding: 20px; }
+    .story-card h3 { font-size: 20px !important; }
+    .story-metric { font-size: 15px; }
+    .testimonial-box { padding: 25px; text-align: center; }
+    .testimonial-box::before { left: 50%; transform: translateX(-50%); top: -10px; font-size: 60px; }
+    .testimonial-text { font-size: 14px; margin-top: 20px;}
+    .mega-footer { padding: 50px 0 20px 0; margin-top: 50px; text-align: center; }
+    .footer-flex-container { flex-direction: column; align-items: center; }
+    .footer-col { margin-bottom: 40px !important; min-width: 100% !important; }
+    .social-icons { justify-content: center; }
+    .btn-play-dino { width: 35px !important; height: 35px !important; font-size: 16px !important; margin-left: 10px !important; }
+}
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="ds-bg"></div><div class="ds-grid-lines"></div>', unsafe_allow_html=True)
-
+# ---- MAİL GÖNDERME FONKSİYONU ----
 def send_email(isim, eposta, mesaj):
     gonderici_email = "deltajanss0@gmail.com"
-    alici_email     = "deltajanss0@gmail.com"
-    sifre           = "orputhixhpumhuzf"
-    msg             = MIMEMultipart()
-    msg['From']     = gonderici_email
-    msg['To']       = alici_email
-    msg['Subject']  = f"Delta Studio Web: Yeni Proje Talebi - {isim}"
-    body = f"Web sitesinden yeni bir mesaj.\n\nİsim: {isim}\nE-posta: {eposta}\n\nMesaj:\n{mesaj}"
+    alici_email = "deltajanss0@gmail.com"
+    sifre = "orputhixhpumhuzf" 
+    msg = MIMEMultipart()
+    msg['From'] = gonderici_email
+    msg['To'] = alici_email
+    msg['Subject'] = f"Delta Studio Web: Yeni Proje Talebi - {isim}"
+    body = f"Web sitesinden yeni bir mesaj aldınız.\n\nİsim / Kurum: {isim}\nİletişim E-postası: {eposta}\n\nMesaj Detayı:\n{mesaj}"
     msg.attach(MIMEText(body, 'plain', 'utf-8'))
     try:
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
         server.login(gonderici_email, sifre)
-        server.sendmail(gonderici_email, alici_email, msg.as_string())
+        text = msg.as_string()
+        server.sendmail(gonderici_email, alici_email, text)
         server.quit()
         return True
     except Exception as e:
         return str(e)
 
+# ----------------------------------------------------
+# 1. NAVBAR (HEADER)
+# ----------------------------------------------------
 st.markdown("""
-<div class="ds-nav">
-    <div class="ds-nav-logo">DELTA <em>STUDIO</em></div>
-    <nav class="ds-nav-links">
-        <a href="#hizmetler">Hizmetler</a>
-        <a href="#hikayeler">Başarı Hikayeleri</a>
-        <a href="#galeri">Galeri</a>
-        <a href="#iletisim" class="ds-nav-cta">Teklif Al</a>
-    </nav>
+<div class="navbar">
+<div class="nav-logo">
+<h2>DELTA STUDIO</h2>
+</div>
+<div class="nav-links">
+<a href="#hizmetler">Hizmetler</a>
+<a href="#hikayeler">Hikayeler</a>
+<a href="#galeri">Galeri</a>
+<a href="#iletisim" class="btn-teklif">Teklif İste</a>
+</div>
 </div>
 """, unsafe_allow_html=True)
 
-try:
-    _c1, _c2 = st.columns([1, 11])
-    with _c1:
-        st.image("logo.png", width=90)
-except Exception:
-    pass
+# ----------------------------------------------------
+# 2. HERO SECTION (OYUNLAŞTIRILMIŞ EASTER EGG)
+# ----------------------------------------------------
+col_logo, col_text = st.columns([1, 4])
+with col_logo:
+    try:
+        st.image("logo.png", width=160)
+    except:
+        pass
 
-st.markdown("""
-<section class="ds-hero" id="hero">
-  <div class="ds-hero-content">
-    <div class="ds-hero-badge">Yaratıcı Dijital Ajans · Türkiye</div>
-    <h1 class="ds-hero-title">Markanı<br><span class="grad-line">Geleceğe Taşı</span></h1>
-    <p class="ds-hero-sub">Sosyal medya yönetiminden kurumsal kimliğe, yazılımdan video prodüksiyona — markanızın her boyutunu profesyonel bir vizyonla şekillendiriyoruz.</p>
-    <div class="ds-hero-btns">
-      <a href="#iletisim" class="ds-btn-primary">Projeye Başla →</a>
-      <a href="#hikayeler" class="ds-btn-ghost">Başarı Hikayeleri</a>
-    </div>
-    <div class="ds-hero-stats">
-      <div><div class="ds-stat-val">50<em>+</em></div><div class="ds-stat-lbl">Tamamlanan Proje</div></div>
-      <div><div class="ds-stat-val">30<em>+</em></div><div class="ds-stat-lbl">Mutlu Müşteri</div></div>
-      <div><div class="ds-stat-val">3<em>+</em></div><div class="ds-stat-lbl">Yıl Deneyim</div></div>
-      <div><div class="ds-stat-val">6<em>K+</em></div><div class="ds-stat-lbl">Üretilen İçerik</div></div>
-    </div>
-  </div>
-  <div class="ds-orbs">
-    <div class="ds-orb ds-orb-1"></div>
-    <div class="ds-orb ds-orb-2"></div>
-    <div class="ds-orb ds-orb-3"></div>
-  </div>
-</section>
+with col_text:
+    st.markdown("""
+<style>
+#dino-toggle { display: none; }
+.hero-content-wrapper { transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+.dino-game-wrapper {
+display: block;
+position: absolute;
+top: 20px;
+left: 0;
+width: 100%;
+height: 300px;
+opacity: 0;
+visibility: hidden;
+transform: translateY(30px);
+transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+border-radius: 15px;
+overflow: hidden;
+background: #f7f7f7;
+border: 2px solid #E31B23;
+box-shadow: 0 15px 35px rgba(227, 27, 35, 0.2);
+z-index: 50;
+}
+#dino-toggle:checked ~ .hero-content-wrapper { 
+opacity: 0; 
+visibility: hidden; 
+transform: translateY(-30px); 
+}
+#dino-toggle:checked ~ .dino-game-wrapper { 
+opacity: 1; 
+visibility: visible; 
+transform: translateY(0); 
+}
+.btn-play-dino {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+background: #E31B23;
+color: #fff;
+width: 45px;
+height: 45px;
+border-radius: 50%;
+cursor: pointer;
+margin-left: 15px;
+font-size: 20px;
+transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+vertical-align: middle;
+box-shadow: 0 0 15px rgba(227,27,35,0.4);
+margin-bottom: 10px;
+}
+.btn-play-dino:hover { background: #b3151b; transform: scale(1.15) rotate(10deg); box-shadow: 0 0 25px rgba(227,27,35,0.7); }
+.btn-close-dino {
+position: absolute;
+top: 15px;
+right: 15px;
+background: #E31B23;
+color: white;
+padding: 8px 15px;
+border-radius: 50px;
+font-size: 12px;
+font-weight: 800;
+font-family: 'Montserrat', sans-serif;
+cursor: pointer;
+z-index: 100;
+box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+transition: 0.3s;
+}
+.btn-close-dino:hover { background: #000; }
+</style>
+<div class="hero">
+<input type="checkbox" id="dino-toggle">
+<div class="hero-content-wrapper">
+<h1>Markanızın Dijital<br><span style="color:#E31B23;">Sesini Yükseltin.</span>
+<label for="dino-toggle" class="btn-play-dino" title="Sürpriz Oyun İçin Tıkla!">
+<i class="fa-solid fa-gamepad"></i>
+</label>
+</h1>
+<p>Hedef kitlenizde yankı uyandıracak, etkileyici ve sonuç odaklı pazarlama çözümlerimizle markanızı zirveye taşıyoruz. Vizyonunuzu gerçeğe dönüştürmek için doğru yerdesiniz.</p>
+</div>
+<div class="dino-game-wrapper">
+<label for="dino-toggle" class="btn-close-dino"><i class="fa-solid fa-xmark"></i> GERİ DÖN</label>
+<iframe src="https://wayou.github.io/t-rex-runner/" width="100%" height="100%" style="border:none;"></iframe>
+</div>
+</div>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="ds-divider"></div>', unsafe_allow_html=True)
+st.divider()
 
+# ----------------------------------------------------
+# 3. HİZMETLER (MİRKET STYLE GRID)
+# ----------------------------------------------------
 st.markdown("""
-<section class="ds-section" id="hizmetler">
-  <div class="ds-sec-hdr">
-    <div class="ds-tag">Hizmetlerimiz</div>
-    <h2 class="ds-heading">Markanız İçin<br><span class="stroke">Tam Kapsamlı</span> Çözümler</h2>
-    <p class="ds-lead">Yaratıcı düşünce ve teknolojik altyapıyı bir araya getirerek markanızı rakiplerinizden farklılaştırıyoruz.</p>
-  </div>
-  <div class="ds-srv-grid">
-    <div class="ds-srv-card"><div class="ds-srv-icon">📱</div><div class="ds-srv-num">01 / HİZMET</div><div class="ds-srv-title">Sosyal Medya Yönetimi</div><div class="ds-srv-desc">Stratejik içerik planlaması, topluluk yönetimi ve analitik raporlama ile sosyal medya varlığınızı büyütüyoruz.</div><div class="ds-srv-arrow">→</div></div>
-    <div class="ds-srv-card"><div class="ds-srv-icon">💻</div><div class="ds-srv-num">02 / HİZMET</div><div class="ds-srv-title">Özel Yazılım &amp; Yasopanel</div><div class="ds-srv-desc">İşletmenize özel yazılım çözümleri ve Yasopanel ile operasyonel süreçlerinizi dijitalleştiriyoruz.</div><div class="ds-srv-arrow">→</div></div>
-    <div class="ds-srv-card"><div class="ds-srv-icon">🎨</div><div class="ds-srv-num">03 / HİZMET</div><div class="ds-srv-title">Kurumsal Kimlik Tasarımı</div><div class="ds-srv-desc">Logo, kimlik rehberi ve marka dili oluşturarak markanızı görsel açıdan güçlü bir konuma taşıyoruz.</div><div class="ds-srv-arrow">→</div></div>
-    <div class="ds-srv-card"><div class="ds-srv-icon">📊</div><div class="ds-srv-num">04 / HİZMET</div><div class="ds-srv-title">Stratejik Pazarlama</div><div class="ds-srv-desc">Veri odaklı stratejiler ile hedef kitlenize ulaşıyor, dönüşüm oranlarınızı artırıyoruz.</div><div class="ds-srv-arrow">→</div></div>
-    <div class="ds-srv-card"><div class="ds-srv-icon">🎬</div><div class="ds-srv-num">05 / HİZMET</div><div class="ds-srv-title">Video Prodüksiyon</div><div class="ds-srv-desc">Profesyonel ekipman ve yaratıcı ekibimizle markanızın hikayesini güçlü videolarla anlatıyoruz.</div><div class="ds-srv-arrow">→</div></div>
-    <div class="ds-srv-card"><div class="ds-srv-icon">✨</div><div class="ds-srv-num">06 / HİZMET</div><div class="ds-srv-title">Yaratıcı İçerik Üretimi</div><div class="ds-srv-desc">Özgün içerikler üreterek markanızı hedef kitlenizle buluşturuyor, etkileşimi artırıyoruz.</div><div class="ds-srv-arrow">→</div></div>
-  </div>
-</section>
+<div id='hizmetler'></div>
+<span class='sec-tag'>#DELTA HİZMETLER</span><h2 class='sec-title'>Kreatif Çözümler</h2>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="ds-divider"></div>', unsafe_allow_html=True)
+c1, c2, c3 = st.columns(3)
 
-st.markdown("""
-<section class="ds-section dim" id="hikayeler">
-  <div class="ds-sec-hdr">
-    <div class="ds-tag">Başarı Hikayeleri</div>
-    <h2 class="ds-heading">Gerçek Sonuçlar,<br><span class="grad">Ölçülebilir</span> Başarı</h2>
-    <p class="ds-lead">Müşterilerimizle birlikte yarattığımız başarı hikayelerini inceleyin.</p>
-  </div>
-  <div class="ds-case-grid">
-    <div class="ds-case-card">
-      <div class="ds-case-client">Müşteri → Caffoine</div>
-      <div class="ds-case-title">Sosyal Medya Etkileşiminde Rekor Artış</div>
-      <div class="ds-case-desc">Caffoine markası için geliştirdiğimiz içerik stratejisi ile organik erişim ve etkileşim oranlarını dramatik biçimde artırdık.</div>
-      <div class="ds-metrics">
-        <div><div class="ds-metric-val">%45</div><div class="ds-metric-lbl">Etkileşim Artışı</div></div>
-        <div><div class="ds-metric-val">3×</div><div class="ds-metric-lbl">Organik Erişim</div></div>
-        <div><div class="ds-metric-val">6 ay</div><div class="ds-metric-lbl">Süre</div></div>
-      </div>
-    </div>
-    <div class="ds-case-card">
-      <div class="ds-case-client">Müşteri → Yasopanel</div>
-      <div class="ds-case-title">Operasyonel Verimliliğin Dijital Dönüşümü</div>
-      <div class="ds-case-desc">Yasopanel yazılımı ile işletmelerin operasyonel süreçlerini dijitalleştirdik, hata oranlarını minimize ettik.</div>
-      <div class="ds-metrics">
-        <div><div class="ds-metric-val">%60</div><div class="ds-metric-lbl">Hız Artışı</div></div>
-        <div><div class="ds-metric-val">%85</div><div class="ds-metric-lbl">Hata Azalması</div></div>
-        <div><div class="ds-metric-val">12 sa</div><div class="ds-metric-lbl">Kazanılan/Hafta</div></div>
-      </div>
-    </div>
-  </div>
-</section>
+with c1:
+    st.markdown("""
+<div class="service-card">
+<div>
+<i class="fa-solid fa-hashtag"></i>
+<h3>Sosyal Medya Yönetimi</h3>
+<p>Ruha dokunan ve ilham veren vizyonunuzu sosyal medya platformlarına yansıtıyoruz. Yaratıcı stratejilerle markanızı zirveye taşıyoruz.</p>
+</div>
+<a href="#iletisim" class="service-link">İncele <i class="fa-solid fa-arrow-right" style="font-size:12px; margin-left:5px; margin-bottom:0; display:inline;"></i></a>
+</div>
+""", unsafe_allow_html=True)
+    st.write("<br>", unsafe_allow_html=True)
+    st.markdown("""
+<div class="service-card">
+<div>
+<i class="fa-solid fa-code"></i>
+<h3>Özel Yazılım & Yasopanel</h3>
+<p>Python tabanlı özel yönetim panelleriyle seyahat acentelerinin ve işletmelerin dijital otomasyon süreçlerini kusursuzlaştırıyoruz.</p>
+</div>
+<a href="#iletisim" class="service-link">İncele <i class="fa-solid fa-arrow-right" style="font-size:12px; margin-left:5px; margin-bottom:0; display:inline;"></i></a>
+</div>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="ds-divider"></div>', unsafe_allow_html=True)
-
-st.markdown("""
-<section class="ds-section" id="yorumlar">
-  <div class="ds-sec-hdr">
-    <div class="ds-tag">Müşteri Görüşleri</div>
-    <h2 class="ds-heading">Onlar Ne <span class="grad">Diyor?</span></h2>
-    <p class="ds-lead">Birlikte çalıştığımız markaların deneyimlerini keşfedin.</p>
-  </div>
-  <div class="ds-testi-grid">
-    <div class="ds-testi-card"><div class="ds-stars">★★★★★</div><div class="ds-testi-text">"Delta Studio ile çalışmak markamızın dijital dönüşümünü hızlandırdı. Sosyal medya etkileşimimiz inanılmaz arttı."</div><div class="ds-testi-author"><div class="ds-avatar">K</div><div><div class="ds-author-name">Keyf-i Deniz Meyhane</div><div class="ds-author-co">// Restoran &amp; Eğlence</div></div></div></div>
-    <div class="ds-testi-card"><div class="ds-stars">★★★★★</div><div class="ds-testi-text">"Otelimizin tanıtımı için hem video hem sosyal medya konusunda mükemmel iş çıkardılar. Rezervasyonlarımız arttı."</div><div class="ds-testi-author"><div class="ds-avatar">T</div><div><div class="ds-author-name">Tonoz Hotel</div><div class="ds-author-co">// Konaklama &amp; Turizm</div></div></div></div>
-    <div class="ds-testi-card"><div class="ds-stars">★★★★★</div><div class="ds-testi-text">"Kurumsal kimliğimizi sıfırdan inşa ettiler. Hedef kitlemize profesyonel bir marka imajı yansıtmamıza yardımcı oldular."</div><div class="ds-testi-author"><div class="ds-avatar">M</div><div><div class="ds-author-name">Makri Travel</div><div class="ds-author-co">// Turizm &amp; Seyahat</div></div></div></div>
-  </div>
-</section>
+with c2:
+    st.markdown("""
+<div class="service-card">
+<div>
+<i class="fa-solid fa-pen-nib"></i>
+<h3>Kurumsal Kimlik Tasarımı</h3>
+<p>Logo, menü, tabela ve dijital şablonlara kadar her detayda markanızın hikayesini anlatıyor, kurumsal algınızı güçlendiriyoruz.</p>
+</div>
+<a href="#iletisim" class="service-link">İncele <i class="fa-solid fa-arrow-right" style="font-size:12px; margin-left:5px; margin-bottom:0; display:inline;"></i></a>
+</div>
+""", unsafe_allow_html=True)
+    st.write("<br>", unsafe_allow_html=True)
+    st.markdown("""
+<div class="service-card">
+<div>
+<i class="fa-solid fa-bullseye"></i>
+<h3>Stratejik Pazarlama</h3>
+<p>Dijital dünyada hedef odaklı reklam kurguları ile markanızı daha görünür hale getiriyor, bütçenizi en verimli şekilde kullanıyoruz.</p>
+</div>
+<a href="#iletisim" class="service-link">İncele <i class="fa-solid fa-arrow-right" style="font-size:12px; margin-left:5px; margin-bottom:0; display:inline;"></i></a>
+</div>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="ds-divider"></div>', unsafe_allow_html=True)
-
-st.markdown("""
-<section class="ds-section dim" id="galeri">
-  <div class="ds-sec-hdr">
-    <div class="ds-tag">Portföy</div>
-    <h2 class="ds-heading">Çalışmalarımızdan<br><span class="stroke">Seçkiler</span></h2>
-    <p class="ds-lead">Ürettiğimiz içerik ve projelerden bir seçki.</p>
-  </div>
+with c3:
+    st.markdown("""
+<div class="service-card">
+<div>
+<i class="fa-solid fa-video"></i>
+<h3>Video Prodüksiyon</h3>
+<p>YouTube, Reels ve reklam filmleri için global standartlarda kurgu. Etkileyici geçişler ve profesyonel color grading ile sinematik işler.</p>
+</div>
+<a href="#iletisim" class="service-link">İncele <i class="fa-solid fa-arrow-right" style="font-size:12px; margin-left:5px; margin-bottom:0; display:inline;"></i></a>
+</div>
+""", unsafe_allow_html=True)
+    st.write("<br>", unsafe_allow_html=True)
+    st.markdown("""
+<div class="service-card">
+<div>
+<i class="fa-solid fa-wand-magic-sparkles"></i>
+<h3>Kreatif İçerik Üretimi</h3>
+<p>Farklı mecralara özel konsept metinler, tasarımlar ve hedef kitleyi harekete geçirecek sanatsal bir dijital bakış açısı sunuyoruz.</p>
+</div>
+<a href="#iletisim" class="service-link">İncele <i class="fa-solid fa-arrow-right" style="font-size:12px; margin-left:5px; margin-bottom:0; display:inline;"></i></a>
+</div>
 """, unsafe_allow_html=True)
 
-filtre = st.selectbox("İçerik Filtrele", ["Tüm İçerikler", "Yalnızca Görseller", "Yalnızca Videolar"], key="gallery_filter")
+st.write("<br><br><br>", unsafe_allow_html=True)
+
+# ----------------------------------------------------
+# 4. BAŞARI HİKAYELERİ (MİRKET STYLE)
+# ----------------------------------------------------
+st.markdown("""
+<div id='hikayeler'></div>
+<span class='sec-tag'>#VAKA ANALİZLERİ</span><h2 class='sec-title'>Senfonilerdeki Başarımız</h2>
+<div class="story-card">
+<span class="story-metric">Caffoine'in Sıfırdan %45 Etkileşim Artışı Hikayesi</span>
+<h3>Marka Mimarisi: Caffoine</h3>
+<p style="color:#aaa; font-family: 'Century Gothic', sans-serif;">Sıfırdan bir kahve kültürü yaratmak... Logo tasarımından kurumsal kimliğe, sosyal medya lansmanından iç mekan görsel stratejisine kadar markanın sosyal medya etkileşimi hızla artarken, dijital dünyada dev bir yankı uyandırdı.</p>
+</div>
+<div class="story-card">
+<span class="story-metric">Operasyonel Süreçlerde %60 Hızlanma Getirdi</span>
+<h3>Teknoloji: Yasopanel Yazılımı</h3>
+<p style="color:#aaa; font-family: 'Century Gothic', sans-serif;">Python tabanlı özel yönetim panelleriyle seyahat acenteleri dijitalde büyük bir başarıya imza attı. Yeniden tasarlanan altyapı, firmaların operasyonel iş yükünü hafifleterek satış grafiklerini zirveye taşıdı.</p>
+</div>
+""", unsafe_allow_html=True)
+
+st.write("<br><br><br>", unsafe_allow_html=True)
+
+# ----------------------------------------------------
+# 5. MÜŞTERİ YORUMLARI (TESTIMONIALS)
+# ----------------------------------------------------
+st.markdown("<span class='sec-tag'>#REFERANSLAR</span><h2 class='sec-title'>Ne Dediler?</h2>", unsafe_allow_html=True)
+
+t1, t2, t3 = st.columns(3)
+with t1:
+    st.markdown("""
+<div class="testimonial-box">
+<p class="testimonial-text">Sosyal medya yönetimimizi Delta ekibine emanet etmek, verdiğimiz en doğru kararlardan biriydi. Kendi ekibimizden biriymiş gibi gösterdikleri özveri için teşekkür ederiz.</p>
+<div class="testimonial-author">Keyf-i Deniz Meyhane</div>
+<div class="testimonial-company">Yönetim Ekibi</div>
+</div>
+""", unsafe_allow_html=True)
+with t2:
+    st.markdown("""
+<div class="testimonial-box">
+<p class="testimonial-text">Sosyal medya ölçümlerimiz fırladı! Delta Studio ekibi dijital ortamı gerçekten anlıyor ve markamızı hayata geçirdi.</p>
+<div class="testimonial-author">Tonoz Hotel</div>
+<div class="testimonial-company">Pazarlama Departmanı</div>
+</div>
+""", unsafe_allow_html=True)
+with t3:
+    st.markdown("""
+<div class="testimonial-box">
+<p class="testimonial-text">Delta ile işbirliğimizde, operasyonel ve dijital süreçlerimizdeki başarının mimarı oldular. Stratejik bakış açıları muazzam.</p>
+<div class="testimonial-author">Makri Travel</div>
+<div class="testimonial-company">Yönetim Kurulu</div>
+</div>
+""", unsafe_allow_html=True)
+
+st.write("<br><br><br>", unsafe_allow_html=True)
+
+# ----------------------------------------------------
+# 6. INSTAGRAM LIVE FEED
+# ----------------------------------------------------
+st.markdown("""
+<div id='galeri'></div>
+<span class='sec-tag'>#BE A SOCIAL!</span><h2 class='sec-title'>Instagram'da Biz</h2>
+""", unsafe_allow_html=True)
+
+ig_col_left, ig_col_main, ig_col_right = st.columns([1, 2, 1])
+ig_base_code = """
+<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/thestudiodelta/" data-instgrm-version="14" style=" background:#0d0d0d; border:1px solid #1a1a1a; border-radius:15px; box-shadow:0 0 10px rgba(0,0,0,0.5); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);">
+<div style="padding:16px; text-align:center;">
+<a href="https://www.instagram.com/thestudiodelta/" style=" background:#0d0d0d; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank">
+<div style="padding-top: 40px; color:#fff; font-family:Arial; font-size:16px; font-weight:bold;">📸 Delta Studio Instagram İçeriği</div>
+<div style="padding-top: 10px; color:#E31B23; font-family:Arial; font-size:14px;">Instagram'da İncele</div>
+</a>
+</div>
+</blockquote>
+<script async src="//www.instagram.com/embed.js"></script>
+"""
+with ig_col_main:
+    components.html(ig_base_code, height=450, scrolling=False)
+
+st.write("<br><br><br>", unsafe_allow_html=True)
+
+# ----------------------------------------------------
+# 7. MEDYA PORTFÖYÜ (PINTEREST TARZI GALERİ)
+# ----------------------------------------------------
+st.markdown("""
+<span class='sec-tag'>#PORTFÖY</span><h2 class='sec-title'>Medya Portföyü</h2>
+<p style='font-size:15px; color:#888; font-family: Century Gothic, sans-serif; margin-bottom: 30px;'>Dijital sanat eserlerimizi detaylı incelemek için görsellerin üzerine tıklayabilirsiniz.</p>
+""", unsafe_allow_html=True)
+
 medya_klasoru = "medya"
-if os.path.exists(medya_klasoru):
-    dosyalar  = os.listdir(medya_klasoru)
-    gorseller = [f for f in dosyalar if f.lower().endswith((".png", ".jpg", ".jpeg"))]
-    videolar  = [f for f in dosyalar if f.lower().endswith(".mp4")]
-    if filtre == "Tüm İçerikler":
-        g, v = gorseller, videolar
-    elif filtre == "Yalnızca Görseller":
-        g, v = gorseller, []
-    else:
-        g, v = [], videolar
-    if g:
-        cols = st.columns(3)
-        for i, gorsel in enumerate(g):
-            with cols[i % 3]:
-                st.image(os.path.join(medya_klasoru, gorsel), use_column_width=True)
-    if v:
-        for video in v:
-            with open(os.path.join(medya_klasoru, video), "rb") as vf:
-                st.video(vf.read())
-    if not g and not v:
-        st.info("Bu kategoride içerik bulunmuyor.")
+
+if not os.path.exists(medya_klasoru):
+    os.makedirs(medya_klasoru)
+    st.info("Sistem 'medya' adlı bir klasör oluşturdu. Lütfen tasarımlarınızı bu klasörün içine atıp sayfayı yenileyin.")
 else:
-    st.info("Medya klasörü henüz eklenmemiş.")
+    tum_dosyalar = [f for f in os.listdir(medya_klasoru) if f.lower().endswith(('.png', '.jpg', '.jpeg', '.mp4'))]
+    
+    if not tum_dosyalar:
+        st.warning("'medya' klasörünüz şu an boş. Post ve Story tasarımlarınızı klasöre eklediğinizde burada otomatik görünecekler.")
+    else:
+        col_s1, col_filter, col_s2 = st.columns([1, 2, 1])
+        with col_filter:
+            kategori = st.radio("Filtre", ["Tüm İçerikler", "Sadece Görseller", "Sadece Videolar"], horizontal=True, label_visibility="collapsed")
+        
+        st.write("<br><br>", unsafe_allow_html=True)
+        
+        gosterilecek_dosyalar = []
+        for dosya in tum_dosyalar:
+            if kategori == "Sadece Görseller" and dosya.lower().endswith(('.png', '.jpg', '.jpeg')):
+                gosterilecek_dosyalar.append(dosya)
+            elif kategori == "Sadece Videolar" and dosya.lower().endswith('.mp4'):
+                gosterilecek_dosyalar.append(dosya)
+            elif kategori == "Tüm İçerikler":
+                gosterilecek_dosyalar.append(dosya)
 
-st.markdown("</section>", unsafe_allow_html=True)
-st.markdown('<div class="ds-divider"></div>', unsafe_allow_html=True)
+        if not gosterilecek_dosyalar:
+            st.info("Bu kategoride henüz bir tasarım bulunmuyor.")
+        else:
+            cols = st.columns(3) 
+            for i, dosya in enumerate(gosterilecek_dosyalar):
+                dosya_yolu = os.path.join(medya_klasoru, dosya)
+                with cols[i % 3]:
+                    st.markdown("<div class='media-container'>", unsafe_allow_html=True)
+                    if dosya.lower().endswith('.mp4'):
+                        st.video(dosya_yolu)
+                    else:
+                        st.image(dosya_yolu, use_container_width=True)
+                    st.markdown("</div>", unsafe_allow_html=True)
 
+st.write("<br><br><br>", unsafe_allow_html=True)
+
+# ----------------------------------------------------
+# 8. TEKLİF İSTE (CONTACT FORM)
+# ----------------------------------------------------
 st.markdown("""
-<section class="ds-section" id="iletisim">
-  <div class="ds-sec-hdr">
-    <div class="ds-tag">İletişim</div>
-    <h2 class="ds-heading">Projenizi<br><span class="grad">Hayata Geçirelim</span></h2>
-    <p class="ds-lead">Formu doldurun, en kısa sürede size dönelim.</p>
-  </div>
-  <div class="ds-contact-wrap">
-    <div>
-      <div class="ds-contact-item"><div class="ds-ci-icon">📧</div><div><div class="ds-ci-label">E-posta</div><div class="ds-ci-val">deltajanss0@gmail.com</div></div></div>
-      <div class="ds-contact-item"><div class="ds-ci-icon">📍</div><div><div class="ds-ci-label">Konum</div><div class="ds-ci-val">Türkiye</div></div></div>
-      <div class="ds-contact-item"><div class="ds-ci-icon">🕐</div><div><div class="ds-ci-label">Yanıt Süresi</div><div class="ds-ci-val">24 saat içinde</div></div></div>
-    </div>
-    <div>
+<div id='iletisim'></div>
+<span class='sec-tag'>#İLETİŞİM</span><h2 class='sec-title'>Dijital Geleceğinizi Beraber Yazalım</h2>
 """, unsafe_allow_html=True)
 
-with st.form("iletisim_formu"):
-    isim   = st.text_input("İsim / Kurum", placeholder="Örn: Caffoine Café")
-    eposta = st.text_input("E-posta Adresiniz", placeholder="ornek@email.com")
-    mesaj  = st.text_area("Proje Detayları", placeholder="Markanız hakkında bilgi verin...", height=160)
-    gonder = st.form_submit_button("Teklif İste →")
-    if gonder:
-        if not isim or not eposta or not mesaj:
-            st.error("Lütfen tüm alanları doldurun.")
+with st.form("contact_form", clear_on_submit=False):
+    col_f1, col_f2 = st.columns(2)
+    with col_f1:
+        input_isim = st.text_input("Adınız Soyadınız / Markanız")
+    with col_f2:
+        input_email = st.text_input("E-posta Adresiniz")
+        
+    input_mesaj = st.text_area("Proje Detayları ve Hedefleriniz", height=150)
+    
+    submit_btn = st.form_submit_button("TEKLİF İSTE")
+    
+    if submit_btn:
+        if not input_isim or not input_email or not input_mesaj:
+            st.warning("Lütfen tüm alanları doldurunuz.")
         else:
-            with st.spinner("Mesajınız iletiliyor..."):
-                sonuc = send_email(isim, eposta, mesaj)
-            if sonuc is True:
-                st.success("Mesajınız başarıyla iletildi!")
-            else:
-                st.error(f"Hata: {sonuc}")
+            with st.spinner("Talebiniz uzman ekibimize iletiliyor..."):
+                sonuc = send_email(input_isim, input_email, input_mesaj)
+                if sonuc is True:
+                    st.success("Talebiniz başarıyla ulaştı. Strateji ekibimiz en kısa sürede sizinle iletişime geçecektir.")
+                else:
+                    st.error(f"Sistem Hatası: {sonuc}")
 
-st.markdown("</div></div></section>", unsafe_allow_html=True)
-
+# ----------------------------------------------------
+# 9. MEGA FOOTER (MİRKET STYLE)
+# ----------------------------------------------------
 st.markdown("""
-<div class="ds-divider"></div>
-<footer class="ds-footer">
-  <div class="ds-footer-grid">
-    <div>
-      <div class="ds-footer-logo">DELTA <em>STUDIO</em></div>
-      <div class="ds-footer-desc">Yaratıcı düşünce ve teknolojinin kesişiminde konumlanan Delta Studio, markaların dijital dünyada güçlü bir iz bırakmasına yardımcı olur.</div>
-      <div class="ds-socials">
-        <a href="https://www.instagram.com/deltastudio.tr/" target="_blank" class="ds-social">📷</a>
-        <a href="https://www.youtube.com/@deltastudio" target="_blank" class="ds-social">▶</a>
-        <a href="https://www.facebook.com/deltastudio.tr/" target="_blank" class="ds-social">f</a>
-      </div>
-    </div>
-    <div class="ds-footer-col"><h5>Hizmetler</h5><div class="ds-footer-links"><a href="#hizmetler">Sosyal Medya</a><a href="#hizmetler">Özel Yazılım</a><a href="#hizmetler">Kurumsal Kimlik</a><a href="#hizmetler">Pazarlama</a><a href="#hizmetler">Video</a></div></div>
-    <div class="ds-footer-col"><h5>Şirket</h5><div class="ds-footer-links"><a href="#hero">Hakkımızda</a><a href="#hikayeler">Başarı Hikayeleri</a><a href="#yorumlar">Referanslar</a><a href="#galeri">Galeri</a></div></div>
-    <div class="ds-footer-col"><h5>İletişim</h5><div class="ds-footer-links"><a href="#iletisim">Teklif Al</a><a href="mailto:deltajanss0@gmail.com">E-posta Gönder</a></div></div>
-  </div>
-  <div class="ds-footer-bottom">
-    <div class="ds-copy">© 2025 Delta Studio. Tüm hakları saklıdır.</div>
-    <div class="ds-status">Aktif &amp; Proje Kabul Ediyor</div>
-  </div>
-</footer>
+<div class="mega-footer">
+<div class="footer-flex-container">
+<div style="flex: 1; min-width: 250px; margin-bottom: 30px;">
+<h2 style="margin:0; font-size:24px !important; margin-bottom: 20px !important;">DELTA STUDIO</h2>
+<p style="font-size: 14px; max-width: 80%; font-family: 'Century Gothic', sans-serif;">Delta Studio, markanızın dijital varlığını güçlendiren yaratıcı bir sosyal medya ve dijital çözüm ajansı olarak hizmet vermektedir.</p>
+<div class="social-icons" style="margin-top: 20px;">
+<a href="https://www.instagram.com/thestudiodelta/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+<a href="https://www.youtube.com/@DeltaAjanss" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+<a href="https://www.facebook.com/profile.php?id=61586644564480" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+</div>
+</div>
+<div style="flex: 1; min-width: 200px; margin-bottom: 30px;" class="footer-col">
+<h4>Bizi Tanıyın</h4>
+<ul class="footer-list">
+<li><a href="#hizmetler">Biz Kimiz?</a></li>
+<li><a href="#hikayeler">Başarı Hikayeleri</a></li>
+<li><a href="#galeri">Medya Portföyü</a></li>
+<li><a href="#iletisim">Teklif İste</a></li>
+</ul>
+</div>
+<div style="flex: 1; min-width: 200px; margin-bottom: 30px;" class="footer-col">
+<h4>Hizmetlerimiz</h4>
+<ul class="footer-list">
+<li><a href="#hizmetler">Sosyal Medya Yönetimi</a></li>
+<li><a href="#hizmetler">Kurumsal Kimlik Tasarımı</a></li>
+<li><a href="#hizmetler">Video Prodüksiyon</a></li>
+<li><a href="#hizmetler">Özel Yazılım Çözümleri</a></li>
+</ul>
+</div>
+<div style="flex: 1; min-width: 200px; margin-bottom: 30px;" class="footer-col">
+<h4>İletişim Bilgileri</h4>
+<ul class="footer-list">
+<li><a href="mailto:deltajanss0@gmail.com"><i class="fa-regular fa-envelope" style="margin-right: 10px; color:#E31B23;"></i> deltajanss0@gmail.com</a></li>
+<li><a href="#"><i class="fa-solid fa-location-dot" style="margin-right: 10px; color:#E31B23;"></i> Fethiye, Muğla / Türkiye</a></li>
+</ul>
+</div>
+</div>
+<div class="footer-bottom">
+<p style="margin: 0; font-size:13px;">© 2026 Delta Studio. Yaratıcı ve Dijital Çözümler. Tüm Hakları Saklıdır.</p>
+</div>
+</div>
 """, unsafe_allow_html=True)
